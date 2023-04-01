@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+
+  <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+    {% block content %} {% endblock %}
+<!--  <nav>
+    <ul>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'home' %}">Strona główna</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}">Zaloguj</a></li>
+        <li><a href="{% url 'register' %}">Zarejestruj</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  //-->
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+    <div class="card" style="width: 18rem; float: left; margin-left: 1rem; margin-top: 1rem;">
+      <div class="card-body">
+        <h5 class="card-title">Login</h5>
+            <i class="fa-sharp fa-solid fa-user"></i>
+            <form method="post">
+                {% csrf_token %}
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" required><br><br>
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required><br><br>
+                <button type="submit" class="btn btn-primary">Login<i class="fa-solid fa-right-to-bracket"></i></button>
+            </form>
+	{% if message %}
+		<p>{{ message }}</p>
+	{% endif %}
+      </div>
+    </div>
+{% endblock %}
