@@ -1,3 +1,50 @@
 h1{
     color: red;
 }
+
+.navbar-brand:hover{
+    color: greenyellow;
+    transition: all 1s ease;
+}
+.offacnvas-items ul li {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.offacnvas-items ul li:last-child {
+    margin-bottom: 0;
+}
+
+.offacnvas-items ul li a {
+    text-decoration: none;
+    display: block;
+    color: white;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: all .4s ease;
+}
+
+.offacnvas-items ul li a:hover {
+    color: greenyellow;
+}
+
+.dropdown-item{
+    color: white;
+}
+
+.dropdown-item:hover{
+    background-color: greenyellow;
+    transition: all .4s ease;
+    color: black;
+}
+
+.dropdown-menu {
+    width: 100%;
+    text-align: center;
+}
+
+.dropup {
+    width: 90%;
+    position: absolute;
+    bottom: 20px;
+}

@@ -2,7 +2,7 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-        Witaj {{ user.email }}!<br>
+        <h1>Witaj {{ user.email }}!</h1><br>
     {% else %}
         <h1>nie jesteś zalogowany</h1>
     {% endif %}

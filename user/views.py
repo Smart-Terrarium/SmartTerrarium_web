@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from .models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -18,7 +19,7 @@ def register_user(request):
         if email and password:
             response = requests.post(API_URL + 'register', json={'email': email, 'password': password})
             if response.status_code == 201:
-                user = User.objects.create_user(email, email, password)
+                user = User.objects.create_user(email, password)
                 return JsonResponse({'success': True, 'message': 'User created successfully.'})
             else:
                 message = 'Unable to create user.'

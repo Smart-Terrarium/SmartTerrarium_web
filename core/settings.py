@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'bootstrap5',
+    "js_lib_bootstrap5",
     'bootstrapform',
     'bootstrapsidebar',
 ]
