@@ -1,0 +1,71 @@
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js"></script>
+
+    <h1>Data from WebSocket:</h1>
+    <div id="data-container"></div>
+    <style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+		}
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border: 1px solid #ddd;
+		}
+		th {
+			background-color: #f2f2f2;
+			color: #333;
+			font-weight: bold;
+		}
+	</style>
+<!--    <table id="myTable">
+		<thead>
+			<tr>
+				<th>Key 1</th>
+				<th>Key 2</th>
+				<th>Timestamp</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table> -->
+{% endblock %}
+
+{% block extra_js %}
+
+    <script>
+    const socket = new WebSocket('ws://localhost:8000/data')
+    console.log(socket)
+            socket.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            document.querySelector('#data-container').innerHTML = data;
+var obj = JSON.parse(data);
+		var table = document.getElementById("myTable").getElementsByTagName("tbody")[0];
+
+		for (var key1 in obj) {
+			if (obj.hasOwnProperty(key1)) {
+				for (var key2 in obj[key1]) {
+					if (obj[key1].hasOwnProperty(key2)) {
+						var timestamp = obj[key1][key2].timestamp;
+						var value = obj[key1][key2].value;
+
+						var row = table.insertRow(-1);
+						var cell1 = row.insertCell(0);
+						var cell2 = row.insertCell(1);
+						var cell3 = row.insertCell(2);
+						var cell4 = row.insertCell(3);
+
+						cell1.innerHTML = key1;
+						cell2.innerHTML = key2;
+						cell3.innerHTML = timestamp;
+						cell4.innerHTML = value;
+					}
+				}
+			}
+		}
+        };
+    </script>
+{% endblock %}
