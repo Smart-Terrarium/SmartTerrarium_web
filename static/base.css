@@ -48,3 +48,7 @@ h1{
     position: absolute;
     bottom: 20px;
 }
+
+.main-content {
+    margin-top: 3%;
+}
