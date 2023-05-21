@@ -46,6 +46,26 @@ socket.onmessage = function (e){
     document.getElementById('temperatureValue').textContent = formattedTemperature;
 
 
+    var secondSensorData = device_dict[Object.keys(device_dict)[0]][Object.keys(device_dict[Object.keys(device_dict)[0]])[1]];
+    // Pobierz wartości timestamp i wartość dla drugiego sensora pierwszego urządzenia
+    var secondLabels = chart ? secondChart.data.labels : [];
+    var secondData = chart ? secondChart.data.datasets[0].data : [];
+
+    if (secondLabels.length < maxColumns) {
+        secondLabels.push(secondSensorData[secondSensorData.length - 1][0]);
+        secondData.push(secondSensorData[secondSensorData.length - 1][1]);
+    } else {
+        secondLabels.shift();
+        secondData.shift();
+        secondLabels.push(secondSensorData[secondSensorData.length - 1][0]);
+        secondData.push(secondSensorData[secondSensorData.length - 1][1]);
+    }
+
+    // Aktualizacja wartości temperatury w HTML
+    var secondTemperatureValue = secondSensorData[secondSensorData.length - 1][1];
+    var secondFormattedTemperature = secondTemperatureValue.toFixed(1) + "°C"; // Zaokrąglamy do jednego miejsca po przecinku i dodajemy znak stopnia Celsjusza
+    document.getElementById('secondTemperatureValue').textContent = secondFormattedTemperature;
+
 if (!chart) {
     const ctx = document.getElementById('myChart');
     chart = new Chart(ctx, {
@@ -71,11 +91,40 @@ if (!chart) {
             }
         }
     });
+        const secondCtx = document.getElementById('secondChart');
+    secondChart = new Chart(secondCtx, {
+        type: 'line',
+        data: {
+            labels: secondLabels,
+            datasets: [{
+                label: 'Second Sensor Temperature: ' + secondFormattedTemperature,
+                data: secondData,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            fill: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false, // Zmieniamy wartość na false, aby rozpocząć skalę od 10
+                    min: 15, // Ustalamy minimalną wartość na 10
+                    max: 40 // Ustalamy maksymalną wartość na 40
+                }
+            }
+        }
+    });
 } else {
     chart.data.labels = labels;
     chart.data.datasets[0].data = data;
     chart.data.datasets[0].label = 'Terrarium Temperature: ' + formattedTemperature;
     chart.update();
+
+    secondChart.data.labels = secondLabels;
+    secondChart.data.datasets[0].data = secondData;
+    secondChart.data.datasets[0].label = 'Second Sensor Temperature: ' + secondFormattedTemperature;
+    secondChart.update();
 }
 
 };

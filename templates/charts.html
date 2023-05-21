@@ -1,3 +1,4 @@
+{% extends 'base.html' %}
 {% load static %}
 {% load bootstrap %}
 
@@ -15,17 +16,24 @@
 
 </head>
 <body>
-
+{% block content %}
     <div class="chart-container">
       <canvas id="myChart"></canvas>
     </div>
 
 
+
     <h1 id="temperatureValue">{{ text }}</h1>
 
+    <div class="chart-container">
+      <canvas id="secondChart"></canvas>
+    </div>
+
+    <h1 id="secondTemperatureValue">{{ text }}</h1>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{% static 'main.js' %}"></script>
+{% endblock %}
 </body>
 </html>
 
