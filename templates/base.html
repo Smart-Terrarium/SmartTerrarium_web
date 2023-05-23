@@ -17,7 +17,7 @@
     <nav class="navbar navbar-dark bg-dark fixed-top">
       <div class="container">
         <a class="navbar-brand" href="#">Smart Terrarium</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+        <button class="navbar-toggler navbar-toggler-left" type="button" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
           <span class="navbar-toggler-icon"></span>
         </button>
         </div>
@@ -34,9 +34,9 @@
       <div class="offcanvas-body">
           <div class ="offacnvas-items">
             <ul>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="#">Rejestracja</a></li>
-                <li><a href="#">Panel główny</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}">Rejestracja</a></li>
+                <li><a href="{% url 'charts' %}">Panel główny</a></li>
                 <li><a href="#">Dodaj terrarium</a></li>
                 <li><a href="#">O Smart Terrarium</a></li>
             </ul>

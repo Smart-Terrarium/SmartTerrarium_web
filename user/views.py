@@ -13,22 +13,25 @@ API_URL = 'http://localhost:8000/'
 
 @csrf_exempt
 def register_user(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        if email and password:
-            response = requests.post(API_URL + 'register', json={'email': email, 'password': password})
-            if response.status_code == 201:
-                user = User.objects.create_user(email, password)
-                return JsonResponse({'success': True, 'message': 'User created successfully.'})
-            else:
-                message = 'Unable to create user.'
-        else:
-            message = 'Email and password are required.'
+    if request.user.is_authenticated:  # Sprawdza, czy użytkownik jest zalogowany
+        return redirect('charts')
     else:
-        message = ''
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            if email and password:
+                response = requests.post(API_URL + 'register', json={'email': email, 'password': password})
+                if response.status_code == 201:
+                    user = User.objects.create_user(email, password)
+                    return JsonResponse({'success': True, 'message': 'User created successfully.'})
+                else:
+                    message = 'Unable to create user.'
+            else:
+                message = 'Email and password are required.'
+        else:
+            message = ''
+            return render(request, 'register.html', {'message': message})
         return render(request, 'register.html', {'message': message})
-    return render(request, 'register.html', {'message': message})
 
 '''
 def authenticate_user(email, password):
@@ -63,15 +66,18 @@ def home_view(request):
     return render(request, 'home.html', context)
 
 def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+    if request.user.is_authenticated:  # Sprawdza, czy użytkownik jest zalogowany
+        return redirect('charts')
+    else:
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            password = request.POST.get('password')
 
-        # Uwierzytelnij użytkownika z użyciem customowego backendu uwierzytelnienia
-        user = authenticate(request, email=email, password=password)
+            # Uwierzytelnij użytkownika z użyciem customowego backendu uwierzytelnienia
+            user = authenticate(request, email=email, password=password)
 
-        if user is not None:
-            login(request, user)
-            return redirect('home')
+            if user is not None:
+                login(request, user)
+                return redirect('home')
 
-    return render(request, 'login.html')
+        return render(request, 'login.html')

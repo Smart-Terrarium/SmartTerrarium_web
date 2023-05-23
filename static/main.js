@@ -84,14 +84,18 @@ if (!chart) {
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: false, // Zmieniamy wartość na false, aby rozpocząć skalę od 10
-                    min: 15, // Ustalamy minimalną wartość na 10
-                    max: 40 // Ustalamy maksymalną wartość na 40
+                    beginAtZero: false,
+                    min: 15,
+                    max: 40
                 }
+            },
+            animation: {
+                duration: 0 // Ustawienie czasu trwania animacji na 0
             }
         }
     });
-        const secondCtx = document.getElementById('secondChart');
+
+    const secondCtx = document.getElementById('secondChart');
     secondChart = new Chart(secondCtx, {
         type: 'line',
         data: {
@@ -99,7 +103,8 @@ if (!chart) {
             datasets: [{
                 label: 'Second Sensor Temperature: ' + secondFormattedTemperature,
                 data: secondData,
-                borderWidth: 1
+                borderWidth: 1,
+                backgroundColor: 'rgba(255, 165, 0, 0.5)'
             }]
         },
         options: {
@@ -108,10 +113,13 @@ if (!chart) {
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    beginAtZero: false, // Zmieniamy wartość na false, aby rozpocząć skalę od 10
-                    min: 15, // Ustalamy minimalną wartość na 10
-                    max: 40 // Ustalamy maksymalną wartość na 40
+                    beginAtZero: false,
+                    min: 15,
+                    max: 40
                 }
+            },
+            animation: {
+                duration: 0 // Ustawienie czasu trwania animacji na 0
             }
         }
     });
@@ -119,12 +127,15 @@ if (!chart) {
     chart.data.labels = labels;
     chart.data.datasets[0].data = data;
     chart.data.datasets[0].label = 'Terrarium Temperature: ' + formattedTemperature;
+    chart.options.animation.duration = 0; // Ustawienie czasu trwania animacji na 0
     chart.update();
 
     secondChart.data.labels = secondLabels;
     secondChart.data.datasets[0].data = secondData;
     secondChart.data.datasets[0].label = 'Second Sensor Temperature: ' + secondFormattedTemperature;
+    secondChart.options.animation.duration = 0; // Ustawienie czasu trwania animacji na 0
     secondChart.update();
 }
+
 
 };

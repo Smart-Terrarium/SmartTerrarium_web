@@ -157,7 +157,7 @@ LOGIN_URL = 'login'
 #Redirect after succesfull login
 LOGIN_REDIRECT_URL = 'home'
 #Redirect after succesfull logout
-LOGOUT_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
 
 #Auth backends, stardard one and custom one
 AUTHENTICATION_BACKENDS = [
