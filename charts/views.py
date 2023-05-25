@@ -7,5 +7,5 @@ from django.shortcuts import render
 
 @login_required
 def index(request):
-    return render(request, 'charts.html', context={'text': 'Hello world'})
+    return render(request, 'charts.html', context={'text': 'Error - connection to server failed'})
 
