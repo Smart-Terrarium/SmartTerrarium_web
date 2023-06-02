@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-#from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from .models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -33,6 +33,7 @@ def register_user(request):
             return render(request, 'register.html', {'message': message})
         return render(request, 'register.html', {'message': message})
 
+
 '''
 def authenticate_user(email, password):
     response = requests.post(API_URL + 'login', json={'email': email, 'password': password})
@@ -60,10 +61,17 @@ def login_view(request):
     #return render(request, 'login.html')
     return render(request, 'login.html', {'message': message})
 '''
+
+
 def home_view(request):
-    context = {}
-    context['email'] = request.user.email
+    access_token = request.session.get('access_token')
+
+    context = {
+        'access_token': access_token
+    }
+
     return render(request, 'home.html', context)
+
 
 def login_view(request):
     if request.user.is_authenticated:  # Sprawdza, czy użytkownik jest zalogowany

@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {% if user.is_authenticated %}
-        <h1>Witaj {{ user.email }}!</h1><br>
+    {% if access_token %}
+        <p>Twój token: {{ access_token }}</p>
     {% else %}
-        <h1>nie jesteś zalogowany</h1>
+        <p>Brak tokena.</p>
     {% endif %}
+
+
 {% endblock %}

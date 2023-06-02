@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ DEBUG = True
 ALLOWED_HOSTS = [
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,10 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'charts',
+    'sensors',
     'bootstrap5',
     "js_lib_bootstrap5",
     'bootstrapform',
-    'bootstrapsidebar',
     'channels',
 ]
 
@@ -78,7 +76,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -89,16 +86,7 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
-}
-
+# Redis database library
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -125,7 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -136,7 +123,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -149,22 +135,30 @@ STATICFILES_DIRS = ['static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Custom user model
+# Custom user model
 AUTH_USER_MODEL = 'user.User'
 
-#Login page url, default model
+# Login page url, default model
 LOGIN_URL = 'login'
-#Redirect after succesfull login
+# Redirect after succesfull login
 LOGIN_REDIRECT_URL = 'home'
-#Redirect after succesfull logout
+# Redirect after succesfull logout
 LOGOUT_REDIRECT_URL = 'login'
 
-#Auth backends, stardard one and custom one
+# Auth backends, stardard one and custom one
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend', # domyślny backend uwierzytelnienia
-    'user.auth_backend.ExternalAPIBackend', # customowy backend uwierzytelnienia
+    # 'django.contrib.auth.backends.ModelBackend', # domyślny backend uwierzytelnienia
+    'user.auth_backend.ExternalAPIBackend',  # customowy backend uwierzytelnienia
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'user.auth_backend.ExternalAPIBackend',
+    )
+}
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = 'media' #odnośnik do folderu z mediami
+MEDIA_ROOT = 'media'  # odnośnik do folderu z mediami

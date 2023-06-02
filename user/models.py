@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
+
 # Create your models here.
 
 class UserManager(BaseUserManager):
@@ -40,7 +41,7 @@ class UserManager(BaseUserManager):
 class User(AbstractUser):
     """Custom user model"""
     username = None
-    email = models.EmailField(('email adress'), unique= True)
+    email = models.EmailField(('email adress'), unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

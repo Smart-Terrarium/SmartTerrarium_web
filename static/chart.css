@@ -1,16 +1,16 @@
-.chart-container{
-    width:80% !important;
-    height:20% !important;
+.chart-container {
+    width: 80% !important;
+    height: 20% !important;
     margin: auto;
 }
 
-.chart-container2{
-    width:80% !important;
-    height:20% !important;
+.chart-container2 {
+    width: 80% !important;
+    height: 20% !important;
     margin: auto;
 }
 
-h1{
+h1 {
     margin-left: 50%;
     margin-bottom: 50px;
 }

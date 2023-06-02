@@ -18,6 +18,7 @@ from django.urls import path, include
 from user.views import register_user, login_view, home_view
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
+from sensors.views import create_sensor
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,7 +27,8 @@ urlpatterns = [
     path('home/', home_view, name='home'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('base/', home_view, name='base'),
-    path('demo',TemplateView.as_view(template_name="bootstrap_base.html"),name='demo'),
     path('logout/', auth_views.LogoutView.as_view()),
+    path('sensorform/', create_sensor, name='sensor_form'),
+    path('404/', TemplateView.as_view(template_name="errors_templates/404_error.html"), name='404'),
     path('', include('charts.urls'))
 ]

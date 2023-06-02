@@ -1,9 +1,9 @@
 var chart = null;
 var maxColumns = 8;
 
-var socket = new WebSocket('ws://localhost:8000/data');
+var socket = new WebSocket('ws://localhost:8000/device/sensor/data');
 
-socket.onmessage = function (e){
+socket.onmessage = function (e) {
     var wsData = JSON.parse(e.data);
 
     var device_dict = {};
@@ -66,76 +66,76 @@ socket.onmessage = function (e){
     var secondFormattedTemperature = secondTemperatureValue.toFixed(1) + "°C"; // Zaokrąglamy do jednego miejsca po przecinku i dodajemy znak stopnia Celsjusza
     document.getElementById('secondTemperatureValue').textContent = secondFormattedTemperature;
 
-if (!chart) {
-    const ctx = document.getElementById('myChart');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Terrarium Temperature: ' + formattedTemperature,
-                data: data,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            fill: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    min: 15,
-                    max: 40
-                }
+    if (!chart) {
+        const ctx = document.getElementById('myChart');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Terrarium Temperature: ' + formattedTemperature,
+                    data: data,
+                    borderWidth: 1
+                }]
             },
-            animation: {
-                duration: 0 // Ustawienie czasu trwania animacji na 0
-            }
-        }
-    });
-
-    const secondCtx = document.getElementById('secondChart');
-    secondChart = new Chart(secondCtx, {
-        type: 'line',
-        data: {
-            labels: secondLabels,
-            datasets: [{
-                label: 'Second Sensor Temperature: ' + secondFormattedTemperature,
-                data: secondData,
-                borderWidth: 1,
-                backgroundColor: 'rgba(255, 165, 0, 0.5)'
-            }]
-        },
-        options: {
-            responsive: true,
-            fill: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    min: 15,
-                    max: 40
+            options: {
+                responsive: true,
+                fill: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 15,
+                        max: 40
+                    }
+                },
+                animation: {
+                    duration: 0 // Ustawienie czasu trwania animacji na 0
                 }
-            },
-            animation: {
-                duration: 0 // Ustawienie czasu trwania animacji na 0
             }
-        }
-    });
-} else {
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = data;
-    chart.data.datasets[0].label = 'Terrarium Temperature: ' + formattedTemperature;
-    chart.options.animation.duration = 0; // Ustawienie czasu trwania animacji na 0
-    chart.update();
+        });
 
-    secondChart.data.labels = secondLabels;
-    secondChart.data.datasets[0].data = secondData;
-    secondChart.data.datasets[0].label = 'Second Sensor Temperature: ' + secondFormattedTemperature;
-    secondChart.options.animation.duration = 0; // Ustawienie czasu trwania animacji na 0
-    secondChart.update();
-}
+        const secondCtx = document.getElementById('secondChart');
+        secondChart = new Chart(secondCtx, {
+            type: 'line',
+            data: {
+                labels: secondLabels,
+                datasets: [{
+                    label: 'Second Sensor Temperature: ' + secondFormattedTemperature,
+                    data: secondData,
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 165, 0, 0.5)'
+                }]
+            },
+            options: {
+                responsive: true,
+                fill: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 15,
+                        max: 40
+                    }
+                },
+                animation: {
+                    duration: 0 // Ustawienie czasu trwania animacji na 0
+                }
+            }
+        });
+    } else {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = data;
+        chart.data.datasets[0].label = 'Terrarium Temperature: ' + formattedTemperature;
+        chart.options.animation.duration = 0; // Ustawienie czasu trwania animacji na 0
+        chart.update();
+
+        secondChart.data.labels = secondLabels;
+        secondChart.data.datasets[0].data = secondData;
+        secondChart.data.datasets[0].label = 'Second Sensor Temperature: ' + secondFormattedTemperature;
+        secondChart.options.animation.duration = 0; // Ustawienie czasu trwania animacji na 0
+        secondChart.update();
+    }
 
 
 };

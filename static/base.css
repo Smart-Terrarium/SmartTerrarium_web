@@ -1,11 +1,12 @@
-h1{
+h1 {
     margin-left: 50%;
 }
 
-.navbar-brand:hover{
+.navbar-brand:hover {
     color: greenyellow;
     transition: all 1s ease;
 }
+
 .offacnvas-items ul li {
     list-style: none;
     margin-bottom: 30px;
@@ -28,11 +29,11 @@ h1{
     color: greenyellow;
 }
 
-.dropdown-item{
+.dropdown-item {
     color: white;
 }
 
-.dropdown-item:hover{
+.dropdown-item:hover {
     background-color: greenyellow;
     transition: all .4s ease;
     color: black;

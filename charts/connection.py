@@ -15,16 +15,14 @@ from pychartjs import BaseChart, ChartType, Color
 device_dict = {}
 
 
-
-
 def parse(data):
     # Konwersja danych JSON na słownik Pythona
     data = json.loads(data)
 
-    for device_id in data: # iteracja po kluczach w słowniku data
+    for device_id in data:  # iteracja po kluczach w słowniku data
         # Utworzenie nowego słownika dla urządzenia, jeśli nie istnieje
         device_dict.setdefault(device_id, {}).update({})
-        for sensor_id in data[device_id]: # iteracja po kluczach w słowniku dla danego urządzenia
+        for sensor_id in data[device_id]:  # iteracja po kluczach w słowniku dla danego urządzenia
             # Dodanie nowego czujnika dla urządzenia, jeśli nie istnieje
             device_dict[device_id].setdefault(sensor_id, []).append(
                 [data[device_id][sensor_id]['timestamp'], data[device_id][sensor_id]['value']])
@@ -43,15 +41,12 @@ def parse(data):
     return [value[0] for value in device_dict[first_device][first_sensor]]"""
 
 
-
-#Wykres pyChart.js
+# Wykres pyChart.js
 class MyBarGraph(BaseChart):
     type = ChartType.Line
 
     class labels:
-        xAxis = [1,2]
-
-
+        xAxis = [1, 2]
 
     class data:
         class Whales:
@@ -71,15 +66,14 @@ class MyBarGraph(BaseChart):
                  "display": True}
 
 
-#Połącznie z websocket
+# Połącznie z websocket
 async def ws_connection():
     ws = websocket.WebSocket()
     ws.connect("ws://localhost:8000/data")
-    while True: #dodać czekanie co sekundę
+    while True:  # dodać czekanie co sekundę
         testdata = ws.recv()
-        #Wyprintowanie funkcji 'parse', która jako argument dostaje 'testdata = ws.recv()'
+        # Wyprintowanie funkcji 'parse', która jako argument dostaje 'testdata = ws.recv()'
         print(parse(testdata))
-
 
 
 if __name__ == "__main__":

@@ -4,6 +4,8 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from .models import User
 
 """Admin panel changes"""
+
+
 @admin.register(User)
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
