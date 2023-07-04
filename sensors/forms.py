@@ -7,4 +7,4 @@ class SensorForm(ModelForm):
 
     class Meta:
         model = Sensor
-        fields = ['name', 'type', 'pin', 'min_value', 'max_value']
+        fields = ['name', 'type', 'pin_number', 'min_value', 'max_value']

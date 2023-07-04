@@ -1,5 +1,103 @@
-h1 {
-    margin-left: 50%;
+
+:root {
+    --code-color: darkred;
+    --code-bg-color: #f6f6f6;
+    --code-font-size: 14px;
+    --code-line-height: 1.4;
+    --scroll-bar-color: #c5c5c5;
+    --scroll-bar-bg-color: #f6f6f6;
+}
+
+pre {
+    color: var(--code-color);
+    font-size: var(--code-font-size);
+    line-height: var(--code-line-height);
+    background-color: var(--code-bg-color);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-bg-color);
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--scroll-bar-bg-color);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-bar-color);
+    border-radius: 20px;
+    border: 3px solid var(--scroll-bar-bg-color);
+}
+
+
+body {
+    background-color: #343a40;
+    margin: 20px; /* Zwiększono wartość marginesu */
+    display: flex;
+}
+
+.sidebar {
+    flex: 1;
+    background-color: #27292c;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    margin: 0 10px; /* Zmniejszono wartość marginesu */
+    padding: 20px;
+    height: calc(100vh - 44px);
+    min-width: 0; /* Dodano minimalną szerokość */
+    overflow: hidden; /* Ukryto zawartość, która wykracza poza szerokość */
+}
+
+.sidebar-title {
+    color: white;
+    text-align: center;
+    padding: 10px 10px 75px 10px;
+}
+
+.sidebar img.centered-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    padding: 10px 10px 75px 10px;
+}
+
+
+
+.content {
+    flex: 6;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    margin: 0 10px;
+    padding: 20px;
+    height: calc(100vh - 44px);
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+}
+
+.scroll-bar-content {
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    flex: 1;
+    padding: 10px; /* Dodano wewnętrzne marginesy */
+}
+
+.main-content {
+    margin: 10px; /* Dodano zewnętrzne marginesy */
+    box-sizing: border-box; /* Dodano box-sizing */
+}
+
+.clear {
+    clear: both;
 }
 
 .navbar-brand:hover {
@@ -7,25 +105,36 @@ h1 {
     transition: all 1s ease;
 }
 
-.offacnvas-items ul li {
+.sidebar-items ul li {
     list-style: none;
     margin-bottom: 30px;
 }
 
-.offacnvas-items ul li:last-child {
+.sidebar-items ul li:last-child {
     margin-bottom: 0;
 }
 
-.offacnvas-items ul li a {
+.sidebar-items ul li a {
     text-decoration: none;
     display: block;
     color: white;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.5;
     transition: all .4s ease;
+    font-size: 1.1em;
 }
 
-.offacnvas-items ul li a:hover {
+.sidebar-items ul li a:hover {
+    color: greenyellow;
+}
+
+.dropdown-menu {
+    width: 100%;
+    text-align: center;
+}
+
+.btn-secondary:hover {
+    margin: auto;
     color: greenyellow;
 }
 
@@ -37,19 +146,4 @@ h1 {
     background-color: greenyellow;
     transition: all .4s ease;
     color: black;
-}
-
-.dropdown-menu {
-    width: 100%;
-    text-align: center;
-}
-
-.dropup {
-    width: 90%;
-    position: absolute;
-    bottom: 20px;
-}
-
-.main-content {
-    margin-top: 3%;
 }

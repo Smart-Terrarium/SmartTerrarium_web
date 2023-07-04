@@ -6,6 +6,12 @@
     {% else %}
         <p>Brak tokena.</p>
     {% endif %}
-
-
+  <h1>Devices</h1><br>
+    <ul>
+        {% for device in response_json %}
+            <li>{{ device }}</li>
+        {% empty %}
+            <li>{{ error_message }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

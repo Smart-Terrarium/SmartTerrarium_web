@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
+from requests import RequestException
+
 from .models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -23,7 +25,7 @@ def register_user(request):
                 response = requests.post(API_URL + 'register', json={'email': email, 'password': password})
                 if response.status_code == 201:
                     user = User.objects.create_user(email, password)
-                    return JsonResponse({'success': True, 'message': 'User created successfully.'})
+                    return redirect('login')
                 else:
                     message = 'Unable to create user.'
             else:
@@ -63,12 +65,28 @@ def login_view(request):
 '''
 
 
+
 def home_view(request):
     access_token = request.session.get('access_token')
 
     context = {
         'access_token': access_token
     }
+
+    bearer_token = request.session.get('access_token')
+    headers = {
+        'Authorization': 'Bearer ' + bearer_token,
+    }
+
+    try:
+        devices_response = requests.get('http://localhost:8000/devices/', headers=headers)
+        if devices_response.ok:
+            response_json = devices_response.json()
+            context['response_json'] = response_json
+        else:
+            context['error_message'] = 'Connection lost. Please log in again to see your devices.'
+    except RequestException:
+        context['error_message'] = 'Connection lost. Please log in again to see your devices.'
 
     return render(request, 'home.html', context)
 

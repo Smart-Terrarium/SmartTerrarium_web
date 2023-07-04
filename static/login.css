@@ -25,3 +25,13 @@ body {
         border-bottom-right-radius: .3rem;
     }
 }
+
+/* margin of image and caption */
+.text-center {
+    margin: 2vh;
+}
+
+/* image size */
+.text-center img {
+    width: 200px;
+}
