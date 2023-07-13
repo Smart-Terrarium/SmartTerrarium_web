@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from user.views import register_user, login_view, home_view
+from user.views import register_user, login_view, home_view, forgot_password
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 from sensors.views import create_sensor
@@ -23,6 +23,7 @@ from sensors.views import create_sensor
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', register_user, name='register'),
+    path('forgot_password/', forgot_password,name="forgot_password"),
     path('login/', login_view, name='login'),
     path('home/', home_view, name='home'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),

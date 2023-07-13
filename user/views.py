@@ -107,3 +107,23 @@ def login_view(request):
                 return redirect('home')
 
         return render(request, 'login.html')
+
+
+def forgot_password(request):
+    if request.user.is_authenticated:
+        return redirect('charts')
+    else:
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            if email:
+                response = requests.post(API_URL + 'login/forgot-password', json={'email': email})
+                if response.status_code == 200:
+                    return redirect('login')
+                else:
+                    message = 'Unable to reset password, wrong email address'
+            else:
+                message = 'Set your email address'
+        else:
+            message = ''
+            return render(request, 'forgot_password.html', {'message': message})
+    return render(request, 'forgot_password.html', {'message': message})
