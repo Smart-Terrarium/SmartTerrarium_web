@@ -36,7 +36,7 @@
 
     <script>
         var chart = null;
-        var number_charts = [];
+        var number_charts = {};
         var maxColumns = 5;
         var sensors_counter = 1;
         var device_dict = {};
@@ -86,13 +86,14 @@
                 console.log("Suma ilości zmiennych sensor_id: " + (sensors_counter - 1));
                 console.log(device_dict);
 
-                for (var x = 1; x < sensors_counter; x++) {
+                for (var x in device_dict) {
+                    for (var y in device_dict[x]){
                     const ctx2 = document.getElementById("myCharts")
                     var ctx = document.createElement('canvas');
-                    ctx.id = x
+                    ctx.id = y
                     ctx2.appendChild(ctx)
-                    ctx_now = document.getElementById(x)
-                    number_charts[x] = new Chart(ctx_now, {
+                    ctx_now = document.getElementById(y)
+                    number_charts[y] = new Chart(ctx_now, {
                             type: 'line',
                             data: {
                                 labels: [2],
@@ -110,7 +111,7 @@
                                     y: {
                                         beginAtZero: false,
                                         min: 1,
-                                        max: 40
+                                        max: 80
                                     }
                                 },
                                 animation: {
@@ -122,13 +123,14 @@
                 }
                 // Aktualizacja danych wykresu
                 for (var j in device_dict) {
-                    for (var y in device_dict[j]) {
-                        number_charts[y].data.labels = device_dict[j][y]['timestamp'];
-                        number_charts[y].data.datasets[0].data = device_dict[j][y]['value'];
-                        number_charts[y].data.datasets[0].label = device_dict[j][y]['value'][0];
-                        number_charts[y].options.animation.duration = 0;
-                        number_charts[y].update();
+                    for (var z in device_dict[j]) {
+                        number_charts[z].data.labels = device_dict[j][z]['timestamp'];
+                        number_charts[z].data.datasets[0].data = device_dict[j][z]['value'];
+                        number_charts[z].data.datasets[0].label = device_dict[j][z]['value'][0];
+                        number_charts[z].options.animation.duration = 0;
+                        number_charts[z].update();
                     }
+                }
                 }
             } else {
                 // Obsługa pozostałych wiadomości

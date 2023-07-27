@@ -65,7 +65,6 @@ def login_view(request):
 '''
 
 
-
 def home_view(request):
     access_token = request.session.get('access_token')
 
@@ -73,13 +72,12 @@ def home_view(request):
         'access_token': access_token
     }
 
-    bearer_token = request.session.get('access_token')
     headers = {
-        'Authorization': 'Bearer ' + bearer_token,
+        'Authorization': 'Bearer ' + access_token,
     }
 
     try:
-        devices_response = requests.get('http://localhost:8000/devices/', headers=headers)
+        devices_response = requests.get(API_URL + 'devices', headers=headers)
         if devices_response.ok:
             response_json = devices_response.json()
             context['response_json'] = response_json

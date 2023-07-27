@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'user',
     'charts',
     'sensors',
+    'alerts',
+    'device',
     'bootstrap5',
     "js_lib_bootstrap5",
     'bootstrapform',

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Device configuration</h1><br>
+
+    {% if device_id %}
+        <p>Device ID: {{ device_id }}</p>
+    {% else %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+
+
+        {% for device in device_config %}
+            {{ device }}
+        {% empty %}
+            {{ error_message }}
+        {% endfor %}
+
+{% endblock %}

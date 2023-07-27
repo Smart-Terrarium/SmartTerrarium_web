@@ -19,6 +19,8 @@ from user.views import register_user, login_view, home_view, forgot_password
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 from sensors.views import create_sensor
+from alerts.views import get_not_served_alerts, get_served_alerts, delete_alert, serve_alerts
+from device.views import device_configuration
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,5 +33,10 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view()),
     path('sensorform/', create_sensor, name='sensor_form'),
     path('404/', TemplateView.as_view(template_name="errors_templates/404_error.html"), name='404'),
-    path('', include('charts.urls'))
+    path('', include('charts.urls')),
+    path('alerts/served', get_served_alerts, name='get_served_alerts'),
+    path('alerts/', get_not_served_alerts, name='get_not_served_alerts'),
+    path('alerts/delete/<int:alert_id>/', delete_alert, name='delete_alert'),
+    path('alerts/serve/<int:alert_id>/', serve_alerts, name='serve_alerts'),
+    path('device/', device_configuration, name='device_config')
 ]

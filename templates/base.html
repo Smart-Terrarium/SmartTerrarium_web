@@ -18,16 +18,20 @@
 
 </head>
 <body>
+<script src="https://kit.fontawesome.com/a732092f31.js" crossorigin="anonymous"></script>
 <!-- Sidebar -->
 <div class="sidebar d-flex flex-column">
     <!-- SmartTerrarium logo in the sidebar -->
-    <a href="{% url 'charts' %}"><img src="{% static 'text-logo-w-frog_200x220.png' %}" alt="Logo" class="centered-image"></a>
+    <a href="{% url 'charts' %}"><img src="{% static 'text-logo-w-frog_200x220.png' %}" alt="Logo"
+                                      class="centered-image"></a>
     <!-- sidebar items -->
     <div class="sidebar-items">
         <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'login' %}">Login</a></li>
             <li><a href="{% url 'register' %}">Register</a></li>
             <li><a href="{% url 'charts' %}">Charts</a></li>
+            <li><a href="{% url 'get_not_served_alerts' %}">Alerts</a></li>
             <li><a href="{% url '404' %}">404</a></li>
             <li><a href="#">About</a></li>
         </ul>
@@ -50,6 +54,7 @@
         <ul class="dropdown-menu text-bg-dark">
             <li><a class="dropdown-item" href="{% url 'sensor_form' %}">Add new sensor</a></li>
             <li><a class="dropdown-item" href="#">Change user password</a></li>
+            <li><a class="dropdown-item" href="{% url 'device_config' %}">Device configuration</a></li>
             <li><a class="dropdown-item" href="{% url 'logout' %}">Log out</a></li>
         </ul>
     </div>
