@@ -30,9 +30,8 @@ def device_configuration(request):
                 if device_id:
                     device_config_response = requests.get(API_URL + f'device/{device_id}/configuration', headers=headers)
                     if device_config_response.ok:
-                        print(type(device_config_response))
-                        device_config = json.loads(device_config_response.text)
-                        context['device_config'] = json.dumps(device_config)
+                        device_config = device_config_response.json()
+                        context['device_config'] = device_config
                     else:
                         context['error_message'] = 'The device configuration could not be retrieved. Try again.'
                 else:

@@ -10,10 +10,24 @@
     {% endif %}
 
 
-        {% for device in device_config %}
-            {{ device }}
-        {% empty %}
-            {{ error_message }}
-        {% endfor %}
+{% if device_config %}
+    {% for key, value in device_config.items %}
+        {% if key != "SENSORS" %}
+            <p>{{ key }}: {{ value }}</p>
+        {% else %}
+            <p>{{ key }}:</p>
+            <ul>
+                {% for sensor in value %}
+                    <li>pin_number: {{ sensor.pin_number }}</li>
+                    <li>category: {{ sensor.category }}</li>
+                    <li>min_val: {{ sensor.min_val }}</li>
+                    <li>max_val: {{ sensor.max_val }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {{ error_message }}
+{% endif %}
 
 {% endblock %}

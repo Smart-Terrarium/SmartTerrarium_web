@@ -10,6 +10,7 @@ SENSOR_CHOICES = [
 
 
 class Sensor(models.Model):
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=25)
     # dth_sensor = models.BooleanField() #This field is not going to the database. Checking it only means that two requests will be created in sensors/views.py
     type = models.CharField(choices=SENSOR_CHOICES, max_length=15)

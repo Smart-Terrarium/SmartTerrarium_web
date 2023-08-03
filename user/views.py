@@ -1,7 +1,9 @@
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from requests import RequestException
-
+from django.contrib.auth.password_validation import validate_password
 from .models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -12,22 +14,30 @@ import requests
 
 API_URL = 'http://localhost:8000/'
 
+from django.contrib.auth.password_validation import validate_password
+
 
 @csrf_exempt
 def register_user(request):
-    if request.user.is_authenticated:  # Sprawdza, czy użytkownik jest zalogowany
+    if request.user.is_authenticated:
         return redirect('charts')
     else:
         if request.method == 'POST':
             email = request.POST.get('email')
             password = request.POST.get('password')
             if email and password:
+                try:
+                    validate_password(password)  # Wywołanie walidacji hasła
+                except ValidationError as e:
+                    message = ', '.join(e.messages)  # Przechwytywanie błędów walidacji hasła
+                    return render(request, 'register.html', {'message': message})
+
                 response = requests.post(API_URL + 'register', json={'email': email, 'password': password})
                 if response.status_code == 201:
                     user = User.objects.create_user(email, password)
                     return redirect('login')
                 else:
-                    message = 'Unable to create user.'
+                    message = 'Unable to create user. Try again.'
             else:
                 message = 'Email and password are required.'
         else:
@@ -64,7 +74,7 @@ def login_view(request):
     return render(request, 'login.html', {'message': message})
 '''
 
-
+@login_required
 def home_view(request):
     access_token = request.session.get('access_token')
 
@@ -125,3 +135,39 @@ def forgot_password(request):
             message = ''
             return render(request, 'forgot_password.html', {'message': message})
     return render(request, 'forgot_password.html', {'message': message})
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        password_repeat = request.POST.get('password_repeat')
+
+        if new_password and password_repeat:
+            if new_password == password_repeat:
+                try:
+                    validate_password(new_password)  # Wywołanie walidacji hasła
+                except ValidationError as e:
+                    message = ' '.join(e.messages)  # Przechwytywanie błędów walidacji hasła
+                    return render(request, 'change_password.html', {'message': message})
+
+                bearer_token = request.session.get('access_token')
+                if bearer_token:
+                    headers = {
+                        'Authorization': 'Bearer ' + bearer_token,
+                    }
+                    response = requests.post(API_URL + 'account/user/change-password', headers=headers,
+                                             json={'password': new_password})
+                    if response.ok:
+                        message = 'Password changed!'
+                    else:
+                        message = 'Unable to change password, try again'
+                else:
+                    message = 'Bearer token not found, please login first'
+            else:
+                message = 'Passwords do not match'
+        else:
+            message = 'New password and password repeat are required'
+    else:
+        message = ''
+    return render(request, 'change_password.html', {'message': message})

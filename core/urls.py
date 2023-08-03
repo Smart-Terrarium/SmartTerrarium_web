@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from user.views import register_user, login_view, home_view, forgot_password
+from user.views import register_user, login_view, home_view, forgot_password, change_password
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
-from sensors.views import create_sensor
+from sensors.views import create_sensor, select_sensors
 from alerts.views import get_not_served_alerts, get_served_alerts, delete_alert, serve_alerts
 from device.views import device_configuration
 
@@ -38,5 +38,7 @@ urlpatterns = [
     path('alerts/', get_not_served_alerts, name='get_not_served_alerts'),
     path('alerts/delete/<int:alert_id>/', delete_alert, name='delete_alert'),
     path('alerts/serve/<int:alert_id>/', serve_alerts, name='serve_alerts'),
-    path('device/', device_configuration, name='device_config')
+    path('device/', device_configuration, name='device_config'),
+    path('change_password/', change_password, name='change_password'),
+    path('sensors/', select_sensors, name='sensors')
 ]
