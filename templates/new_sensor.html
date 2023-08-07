@@ -23,6 +23,11 @@
                             </div>
                             <form method="post">
                                 {% csrf_token %}
+                                {% if error_message %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ error_message }}
+                                    </div>
+                                {% endif %}
                                 <div class="form-outline mb-4">
                                     {{ form|bootstrap }}
                                 </div>
@@ -30,7 +35,6 @@
                                     <button class="btn btn-success btn-block" type="submit">
                                         Confirm
                                     </button>
-
                                 </div>
                             </form>
                         </div>

@@ -18,7 +18,7 @@ from django.urls import path, include
 from user.views import register_user, login_view, home_view, forgot_password, change_password
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
-from sensors.views import create_sensor, select_sensors
+from sensors.views import create_sensor, select_sensors, delete_sensor, edit_sensor
 from alerts.views import get_not_served_alerts, get_served_alerts, delete_alert, serve_alerts
 from device.views import device_configuration
 
@@ -40,5 +40,7 @@ urlpatterns = [
     path('alerts/serve/<int:alert_id>/', serve_alerts, name='serve_alerts'),
     path('device/', device_configuration, name='device_config'),
     path('change_password/', change_password, name='change_password'),
-    path('sensors/', select_sensors, name='sensors')
+    path('sensors/', select_sensors, name='sensors'),
+    path('sensors/delete/<int:device_id>/<int:sensor_id>/', delete_sensor, name='delete_sensor'),
+    path('sensors/edit/<int:device_id>/<int:sensor_id>/', edit_sensor, name='edit_sensor')
 ]

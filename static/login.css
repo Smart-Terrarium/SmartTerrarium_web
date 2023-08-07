@@ -2,17 +2,6 @@ body {
     background-color: #343a40;
 }
 
-.gradient-custom-2 {
-    /* fallback for old browsers */
-    background: #ffffff;
-
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to right, #198754, #198754);
-
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to right, #198754, #198754);
-}
-
 @media (min-width: 768px) {
     .gradient-form {
         height: 100vh !important;
