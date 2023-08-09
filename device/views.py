@@ -1,8 +1,11 @@
 import requests
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 API_URL = 'http://localhost:8000/'
 
+
+@login_required
 def device_configuration(request):
     access_token = request.session.get('access_token')
     context = {'access_token': access_token}
@@ -16,7 +19,8 @@ def device_configuration(request):
                 device_id = device_info[0].get('id')
                 context['device_id'] = device_id
                 if device_id:
-                    device_config_response = requests.get(API_URL + f'device/{device_id}/configuration', headers=headers)
+                    device_config_response = requests.get(API_URL + f'device/{device_id}/configuration',
+                                                          headers=headers)
                     if device_config_response.ok:
                         device_config_data = device_config_response.json()
                         if 'payload' in device_config_data:
@@ -65,6 +69,7 @@ def device_configuration(request):
     return render(request, 'device.html', context)
 
 
+@login_required
 def edit_device_config(request, device_id):
     if request.method == 'POST':
         access_token = request.session.get('access_token')
@@ -96,39 +101,39 @@ def edit_device_config(request, device_id):
 
         # Utworzenie JSON z nowymi danymi konfiguracji urządzenia
         device_config_data = {
-            'MQTT': {
-                'MQTT_ID_NAME': mqtt_id_name,
-                'MQTT_PORT': mqtt_port,
-                'MQTT_SERVER_IP': mqtt_server_ip,
+            "MQTT": {
+                "MQTT_ID_NAME": mqtt_id_name,
+                "MQTT_PORT": mqtt_port,
+                "MQTT_SERVER_IP": mqtt_server_ip,
             },
-            'TCP': {
-                'TCP_SERVER_IP': tcp_server_ip,
-                'TCP_PORT': tcp_port,
+            "TCP": {
+                "TCP_SERVER_IP": tcp_server_ip,
+                "TCP_PORT": tcp_port,
             },
-            'BUTTONS': {
-                'BUTTON_ADC_PIN': button_adc_pin,
+            "BUTTONS": {
+                "BUTTON_ADC_PIN": button_adc_pin,
             },
-            'PWM': {
-                'PWM_PIN': pwm_pin,
+            "PWM": {
+                "PWM_PIN": pwm_pin,
             },
-            'WIFI': {
-                'WIFI_SSID': wifi_ssid,
-                'WIFI_PASSWORD': wifi_password,
-                'ESP_MAC_ADDRESS': esp_mac_address,
+            "WIFI": {
+                "WIFI_SSID": wifi_ssid,
+                "WIFI_PASSWORD": wifi_password,
+                "ESP_MAC_ADDRESS": esp_mac_address,
             },
-            'LCD': {
-                'LCD_WIDTH': lcd_width,
-                'LCD_HEIGHT': lcd_height,
-                'LCD_ROTATION': lcd_rotation,
-                'LCD_CLK_PIN': lcd_clk_pin,
-                'LCD_MOSI_PIN': lcd_mosi_pin,
-                'LCD_MISO_PIN': lcd_miso_pin,
-                'LCD_CS_PIN': lcd_cs_pin,
-                'LCD_RST_PIN': lcd_rst_pin,
-                'LCD_DC_PIN': lcd_dc_pin,
-                'FONT_DIR': font_dir,
-                'FONT_WIDTH': font_width,
-                'FONT_HEIGHT': font_height,
+            "LCD": {
+                "LCD_WIDTH": lcd_width,
+                "LCD_HEIGHT": lcd_height,
+                "LCD_ROTATION": lcd_rotation,
+                "LCD_CLK_PIN": lcd_clk_pin,
+                "LCD_MOSI_PIN": lcd_mosi_pin,
+                "LCD_MISO_PIN": lcd_miso_pin,
+                "LCD_CS_PIN": lcd_cs_pin,
+                "LCD_RST_PIN": lcd_rst_pin,
+                "LCD_DC_PIN": lcd_dc_pin,
+                "FONT_DIR": font_dir,
+                "FONT_WIDTH": font_width,
+                "FONT_HEIGHT": font_height,
             },
         }
 
@@ -136,11 +141,13 @@ def edit_device_config(request, device_id):
         headers = {'Authorization': bearer_token}
 
         # Wysłanie żądania POST na adres edycji konfiguracji urządzenia
-        edit_url = f'http://localhost:8000/device/{device_id}/configuration/'
+        edit_url = f'http://localhost:8000/device/{device_id}/configuration'
         try:
             response = requests.post(edit_url, json=device_config_data, headers=headers)
             if response.ok:
-                return redirect('device_configuration')
+                error_message_device = 'Device configuration changed, reboot the device.'
+                context = {'error_message': error_message_device}
+                return render(request, 'home.html', context)
             else:
                 error_message = 'Failed to edit device configuration.'
                 context = {'error_message': error_message}
@@ -152,23 +159,6 @@ def edit_device_config(request, device_id):
             return render(request, 'device.html', context)
 
     else:
-        # Pobranie danych konfiguracji urządzenia z API
-        access_token = request.session.get('access_token')
-        headers = {'Authorization': 'Bearer ' + access_token}
-
-        get_url = f'http://localhost:8000/device/{device_id}/configuration/'
-        try:
-            response = requests.get(get_url, headers=headers)
-            if response.ok:
-                device_config_data = response.json().get('payload', {})
-                context = {'device_config_data': device_config_data}
-                return render(request, 'edit_device_config.html', context)
-            else:
-                error_message = 'Failed to retrieve device configuration data.'
-                context = {'error_message': error_message}
-                return render(request, 'device.html', context)
-
-        except requests.RequestException:
-            error_message = 'Connection lost. Please try again.'
-            context = {'error_message': error_message}
-            return render(request, 'device.html', context)
+        error_message = 'Connection lost. Please try again.'
+        context = {'error_message': error_message}
+        return render(request, 'device.html', context)

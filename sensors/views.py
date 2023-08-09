@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from requests import RequestException
-
+from django.contrib import messages
 from .forms import SensorForm
 import requests
 import json
@@ -35,7 +35,7 @@ def create_sensor(request):
                         response = requests.post(url, data=json.dumps(data), headers=headers)
 
                         if response.ok:
-                            return redirect('home')  # Przekierowanie po udanym żądaniu
+                            return redirect('sensors')  # Przekierowanie po udanym żądaniu
                         else:
                             context = {'form': form, 'error_message': 'Failed to create sensor.'}
                             return render(request, 'new_sensor.html', context)
@@ -198,3 +198,23 @@ def edit_sensor(request, device_id, sensor_id):
             context = {'error_message': error_message}
             return render(request, 'sensors.html', context)
 
+
+@login_required
+def sync_sensors_with_db(request, device_id):
+    access_token = request.session.get('access_token')
+    bearer_token = 'Bearer ' + access_token
+
+    sync_url = f'http://localhost:8000/device/{device_id}/sensors/'
+    headers = {'Authorization': bearer_token}
+
+    try:
+        response = requests.post(sync_url, headers=headers)
+        if response.ok:
+            messages.success(request, 'Sensors synchronized successfully!')
+        else:
+            messages.error(request, 'Failed to synchronize sensors with the database.')
+
+    except requests.RequestException:
+        messages.error(request, 'Connection lost. Please try again.')
+
+    return redirect('sensors')  # Redirect to sensors page after processing

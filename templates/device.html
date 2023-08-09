@@ -4,17 +4,12 @@
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="mb-0">Device Configuration</h1>
-            <a href="{% url 'edit_device_config' device_id=device_id %}"
-               class="btn btn-success {% if not device_config %}disabled{% endif %}" data-bs-toggle="modal"
-               data-bs-target="#editModal">Edit device configuration</a>
-
+            {% if device_id and device_config %}
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal">
+                    Edit device configuration
+                </button>
+            {% endif %}
         </div>
-
-        {% if device_id %}
-            <p class="text-muted small">Device ID: {{ device_id }}</p>
-        {% else %}
-            <p class="text-danger">{{ error_message }}</p>
-        {% endif %}
 
         <div class="row">
             <div class="col-md-6">
@@ -84,154 +79,157 @@
         </div>
     </div>
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Device Configuration (Attention! You change at your own risk)</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Device Configuration (Attention! You change at your
+                        own risk)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-            <div class="modal-body">
-                <form id="editDeviceConfigForm" method="post" action="{% url 'edit_device_config' device_id=device_id %}">
-                    {% csrf_token %}
+                <div class="modal-body">
+                    {% if device_config %}
+    <form method="post" action="{% url 'edit_device_config' device_id=device_id %}">
+        {% csrf_token %}
 
-                    <div class="row">
-                        <!-- MQTT, TCP, Buttons, WiFi Configuration - Left Column -->
-                        <div class="col-md-6">
-                            <!-- MQTT Configuration -->
-                            <div class="mb-3">
-                                <label for="mqtt_id_name" class="form-label">MQTT ID Name</label>
-                                <input type="text" class="form-control" id="mqtt_id_name" name="mqtt_id_name"
-                                       value="{{ device_config.MQTT_ID_NAME }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="mqtt_port" class="form-label">MQTT Port</label>
-                                <input type="number" class="form-control" id="mqtt_port" name="mqtt_port"
-                                       value="{{ device_config.MQTT_PORT }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="mqtt_server_ip" class="form-label">MQTT Server IP</label>
-                                <input type="text" class="form-control" id="mqtt_server_ip" name="mqtt_server_ip"
-                                       value="{{ device_config.MQTT_SERVER_IP }}">
+                        <div class="row">
+                            <!-- MQTT, TCP, Buttons, WiFi Configuration - Left Column -->
+                            <div class="col-md-6">
+                                <!-- MQTT Configuration -->
+                                <div class="mb-3">
+                                    <label for="mqtt_id_name" class="form-label">MQTT ID Name</label>
+                                    <input type="text" class="form-control" id="mqtt_id_name" name="mqtt_id_name"
+                                           value="{{ device_config.MQTT_ID_NAME }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mqtt_port" class="form-label">MQTT Port</label>
+                                    <input type="number" class="form-control" id="mqtt_port" name="mqtt_port"
+                                           value="{{ device_config.MQTT_PORT }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="mqtt_server_ip" class="form-label">MQTT Server IP</label>
+                                    <input type="text" class="form-control" id="mqtt_server_ip" name="mqtt_server_ip"
+                                           value="{{ device_config.MQTT_SERVER_IP }}">
+                                </div>
+
+                                <!-- TCP Configuration -->
+                                <div class="mb-3">
+                                    <label for="tcp_server_ip" class="form-label">TCP Server IP</label>
+                                    <input type="text" class="form-control" id="tcp_server_ip" name="tcp_server_ip"
+                                           value="{{ device_config.TCP_SERVER_IP }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="tcp_port" class="form-label">TCP Port</label>
+                                    <input type="number" class="form-control" id="tcp_port" name="tcp_port"
+                                           value="{{ device_config.TCP_PORT }}">
+                                </div>
+
+                                <!-- Buttons Configuration -->
+                                <div class="mb-3">
+                                    <label for="button_adc_pin" class="form-label">Button ADC Pin</label>
+                                    <input type="number" class="form-control" id="button_adc_pin" name="button_adc_pin"
+                                           value="{{ device_config.BUTTON_ADC_PIN }}">
+                                </div>
+
+                                <!-- WiFi Configuration -->
+                                <div class="mb-3">
+                                    <label for="wifi_ssid" class="form-label">WiFi SSID</label>
+                                    <input type="text" class="form-control" id="wifi_ssid" name="wifi_ssid"
+                                           value="{{ device_config.WIFI_SSID }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="wifi_password" class="form-label">WiFi Password</label>
+                                    <input type="password" class="form-control" id="wifi_password" name="wifi_password"
+                                           value="{{ device_config.WIFI_PASSWORD }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="esp_mac_address" class="form-label">ESP MAC Address
+                                        (xx:xx:xx:xx:xx:xx)</label>
+                                    <input type="text" class="form-control" id="esp_mac_address" name="esp_mac_address"
+                                           value="{{ device_config.ESP_MAC_ADDRESS }}">
+                                </div>
                             </div>
 
-                            <!-- TCP Configuration -->
-                            <div class="mb-3">
-                                <label for="tcp_server_ip" class="form-label">TCP Server IP</label>
-                                <input type="text" class="form-control" id="tcp_server_ip" name="tcp_server_ip"
-                                       value="{{ device_config.TCP_SERVER_IP }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="tcp_port" class="form-label">TCP Port</label>
-                                <input type="number" class="form-control" id="tcp_port" name="tcp_port"
-                                       value="{{ device_config.TCP_PORT }}">
-                            </div>
+                            <!-- PWM, LCD Configuration - Right Column -->
+                            <div class="col-md-6">
+                                <!-- PWM Configuration -->
+                                <div class="mb-3">
+                                    <label for="pwm_pin" class="form-label">PWM Pin</label>
+                                    <input type="number" class="form-control" id="pwm_pin" name="pwm_pin"
+                                           value="{{ device_config.PWM_PIN }}">
+                                </div>
 
-                            <!-- Buttons Configuration -->
-                            <div class="mb-3">
-                                <label for="button_adc_pin" class="form-label">Button ADC Pin</label>
-                                <input type="number" class="form-control" id="button_adc_pin" name="button_adc_pin"
-                                       value="{{ device_config.BUTTON_ADC_PIN }}">
-                            </div>
+                                <!-- LCD Configuration -->
+                                <div class="mb-3">
+                                    <label for="lcd_width" class="form-label">LCD Width</label>
+                                    <input type="number" class="form-control" id="lcd_width" name="lcd_width"
+                                           value="{{ device_config.LCD_WIDTH }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_height" class="form-label">LCD Height</label>
+                                    <input type="number" class="form-control" id="lcd_height" name="lcd_height"
+                                           value="{{ device_config.LCD_HEIGHT }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_rotation" class="form-label">LCD Rotation</label>
+                                    <input type="number" class="form-control" id="lcd_rotation" name="lcd_rotation"
+                                           value="{{ device_config.LCD_ROTATION }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_clk_pin" class="form-label">LCD CLK Pin</label>
+                                    <input type="number" class="form-control" id="lcd_clk_pin" name="lcd_clk_pin"
+                                           value="{{ device_config.LCD_CLK_PIN }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_mosi_pin" class="form-label">LCD MOSI Pin</label>
+                                    <input type="number" class="form-control" id="lcd_mosi_pin" name="lcd_mosi_pin"
+                                           value="{{ device_config.LCD_MOSI_PIN }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_miso_pin" class="form-label">LCD MISO Pin</label>
+                                    <input type="number" class="form-control" id="lcd_miso_pin" name="lcd_miso_pin"
+                                           value="{{ device_config.LCD_MISO_PIN }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_cs_pin" class="form-label">LCD CS Pin</label>
+                                    <input type="number" class="form-control" id="lcd_cs_pin" name="lcd_cs_pin"
+                                           value="{{ device_config.LCD_CS_PIN }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_rst_pin" class="form-label">LCD RST Pin</label>
+                                    <input type="number" class="form-control" id="lcd_rst_pin" name="lcd_rst_pin"
+                                           value="{{ device_config.LCD_RST_PIN }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lcd_dc_pin" class="form-label">LCD DC Pin</label>
+                                    <input type="number" class="form-control" id="lcd_dc_pin" name="lcd_dc_pin"
+                                           value="{{ device_config.LCD_DC_PIN }}">
+                                </div>
 
-                            <!-- WiFi Configuration -->
-                            <div class="mb-3">
-                                <label for="wifi_ssid" class="form-label">WiFi SSID</label>
-                                <input type="text" class="form-control" id="wifi_ssid" name="wifi_ssid"
-                                       value="{{ device_config.WIFI_SSID }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="wifi_password" class="form-label">WiFi Password</label>
-                                <input type="password" class="form-control" id="wifi_password" name="wifi_password"
-                                       value="{{ device_config.WIFI_PASSWORD }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="esp_mac_address" class="form-label">ESP MAC Address (xx:xx:xx:xx:xx:xx)</label>
-                                <input type="text" class="form-control" id="esp_mac_address" name="esp_mac_address"
-                                       value="{{ device_config.ESP_MAC_ADDRESS }}">
+                                <!-- Font Configuration -->
+                                <div class="mb-3">
+                                    <label for="font_dir" class="form-label">Font Directory</label>
+                                    <input type="text" class="form-control" id="font_dir" name="font_dir"
+                                           value="{{ device_config.FONT_DIR }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="font_width" class="form-label">Font Width</label>
+                                    <input type="number" class="form-control" id="font_width" name="font_width"
+                                           value="{{ device_config.FONT_WIDTH }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="font_height" class="form-label">Font Height</label>
+                                    <input type="number" class="form-control" id="font_height" name="font_height"
+                                           value="{{ device_config.FONT_HEIGHT }}">
+                                </div>
                             </div>
                         </div>
 
-                        <!-- PWM, LCD Configuration - Right Column -->
-                        <div class="col-md-6">
-                            <!-- PWM Configuration -->
-                            <div class="mb-3">
-                                <label for="pwm_pin" class="form-label">PWM Pin</label>
-                                <input type="number" class="form-control" id="pwm_pin" name="pwm_pin"
-                                       value="{{ device_config.PWM_PIN }}">
-                            </div>
-
-                            <!-- LCD Configuration -->
-                            <div class="mb-3">
-                                <label for="lcd_width" class="form-label">LCD Width</label>
-                                <input type="number" class="form-control" id="lcd_width" name="lcd_width"
-                                       value="{{ device_config.LCD_WIDTH }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_height" class="form-label">LCD Height</label>
-                                <input type="number" class="form-control" id="lcd_height" name="lcd_height"
-                                       value="{{ device_config.LCD_HEIGHT }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_rotation" class="form-label">LCD Rotation</label>
-                                <input type="number" class="form-control" id="lcd_rotation" name="lcd_rotation"
-                                       value="{{ device_config.LCD_ROTATION }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_clk_pin" class="form-label">LCD CLK Pin</label>
-                                <input type="number" class="form-control" id="lcd_clk_pin" name="lcd_clk_pin"
-                                       value="{{ device_config.LCD_CLK_PIN }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_mosi_pin" class="form-label">LCD MOSI Pin</label>
-                                <input type="number" class="form-control" id="lcd_mosi_pin" name="lcd_mosi_pin"
-                                       value="{{ device_config.LCD_MOSI_PIN }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_miso_pin" class="form-label">LCD MISO Pin</label>
-                                <input type="number" class="form-control" id="lcd_miso_pin" name="lcd_miso_pin"
-                                       value="{{ device_config.LCD_MISO_PIN }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_cs_pin" class="form-label">LCD CS Pin</label>
-                                <input type="number" class="form-control" id="lcd_cs_pin" name="lcd_cs_pin"
-                                       value="{{ device_config.LCD_CS_PIN }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_rst_pin" class="form-label">LCD RST Pin</label>
-                                <input type="number" class="form-control" id="lcd_rst_pin" name="lcd_rst_pin"
-                                       value="{{ device_config.LCD_RST_PIN }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="lcd_dc_pin" class="form-label">LCD DC Pin</label>
-                                <input type="number" class="form-control" id="lcd_dc_pin" name="lcd_dc_pin"
-                                       value="{{ device_config.LCD_DC_PIN }}">
-                            </div>
-
-                            <!-- Font Configuration -->
-                            <div class="mb-3">
-                                <label for="font_dir" class="form-label">Font Directory</label>
-                                <input type="text" class="form-control" id="font_dir" name="font_dir"
-                                       value="{{ device_config.FONT_DIR }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="font_width" class="form-label">Font Width</label>
-                                <input type="number" class="form-control" id="font_width" name="font_width"
-                                       value="{{ device_config.FONT_WIDTH }}">
-                            </div>
-                            <div class="mb-3">
-                                <label for="font_height" class="form-label">Font Height</label>
-                                <input type="number" class="form-control" id="font_height" name="font_height"
-                                       value="{{ device_config.FONT_HEIGHT }}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Save changes and send to device</button>
-                </form>
+                        <button type="submit" class="btn btn-primary">Save Configuration</button>
+                    </form>{% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 {% endblock %}

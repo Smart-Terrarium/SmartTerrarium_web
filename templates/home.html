@@ -9,9 +9,13 @@
   <h1>Devices</h1><br>
     <ul>
         {% for device in response_json %}
-            <li>{{ device }}</li>
+            {{ device }}
+            {{ error_message_device }}
+
         {% empty %}
             <li>{{ error_message }}</li>
         {% endfor %}
     </ul>
 {% endblock %}
+
+
