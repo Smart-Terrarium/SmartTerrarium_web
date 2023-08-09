@@ -197,3 +197,4 @@ def edit_sensor(request, device_id, sensor_id):
             error_message = 'Connection lost. Please try again.'
             context = {'error_message': error_message}
             return render(request, 'sensors.html', context)
+

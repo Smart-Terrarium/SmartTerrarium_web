@@ -27,23 +27,24 @@ def register_user(request):
             password = request.POST.get('password')
             if email and password:
                 try:
-                    validate_password(password)  # Wywołanie walidacji hasła
+                    validate_password(password)
                 except ValidationError as e:
-                    message = ', '.join(e.messages)  # Przechwytywanie błędów walidacji hasła
-                    return render(request, 'register.html', {'message': message})
+                    message = ', '.join(e.messages)
+                    messages.error(request, message)  # Dodanie błędu do wiadomości Django
+                    return render(request, 'register.html')
 
                 response = requests.post(API_URL + 'register', json={'email': email, 'password': password})
                 if response.status_code == 201:
                     user = User.objects.create_user(email, password)
+                    messages.success(request, 'Account created successfully! Please check your email for a confirmation link before logging in.')  # Dodanie wiadomości o sukcesie
                     return redirect('login')
                 else:
-                    message = 'Unable to create user. Try again.'
+                    messages.error(request, 'Unable to create user. It is possible that the account with givem email address already exists.')
             else:
-                message = 'Email and password are required.'
+                messages.error(request, 'Email and password are required.')
         else:
             message = ''
-            return render(request, 'register.html', {'message': message})
-        return render(request, 'register.html', {'message': message})
+        return render(request, 'register.html')
 
 
 '''
@@ -100,21 +101,22 @@ def home_view(request):
 
 
 def login_view(request):
-    if request.user.is_authenticated:  # Sprawdza, czy użytkownik jest zalogowany
+    if request.user.is_authenticated:
         return redirect('charts')
     else:
         if request.method == 'POST':
             email = request.POST.get('email')
             password = request.POST.get('password')
 
-            # Uwierzytelnij użytkownika z użyciem customowego backendu uwierzytelnienia
             user = authenticate(request, email=email, password=password)
 
             if user is not None:
                 login(request, user)
                 return redirect('home')
+            else:
+                messages.error(request, 'Invalid email or password. Please try again.')
 
-        return render(request, 'login.html')
+    return render(request, 'login.html')
 
 
 def forgot_password(request):

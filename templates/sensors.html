@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load bootstrap %}
-
+{% block title %} Sensors - SmartTerrarium {% endblock %}
 {% block content %}
-    <h1>Your sensors</h1><br>
-    {% if sensor_data %}
-        <div class="container">
+    <div class="container mt-4">
+        <h1>Your sensors</h1><br>
+        {% if sensor_data %}
             <div class="row">
                 {% for sensor in sensor_data %}
                     <div class="col-md-4">
@@ -29,12 +29,12 @@
                                 </div>
                             </div>
                             <div class="card-body">
-    <p>Id: {{ sensor.id }}</p>
-    <p>Type: {{ sensor.get_type_display }}</p>
-    <p>Pin Number: {{ sensor.pin_number }}</p>
-    <p>Min Value: {{ sensor.min_value }}</p>
-    <p>Max Value: {{ sensor.max_value }}</p>
-</div>
+                                <p>Id: {{ sensor.id }}</p>
+                                <p>Type: {{ sensor.get_type_display }}</p>
+                                <p>Pin Number: {{ sensor.pin_number }}</p>
+                                <p>Min Value: {{ sensor.min_value }}</p>
+                                <p>Max Value: {{ sensor.max_value }}</p>
+                            </div>
 
                         </div>
                     </div>
@@ -49,41 +49,46 @@
                                             aria-label="Close"></button>
                                 </div>
 
-<div class="modal-body">
-    <form id="editSensorForm{{ sensor.id }}" method="post"
-        action="{% url 'edit_sensor' device_id=sensor.device_id sensor_id=sensor.id %}">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ sensor.name }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="pin_number" class="form-label">Pin Number</label>
-            <input type="number" class="form-control" id="pin_number" name="pin_number" value="{{ sensor.pin_number }}"
-                required>
-        </div>
-        <div class="mb-3">
-            <label for="type" class="form-label">Type</label>
-            <select class="form-control" id="type" name="type" required>
-                {% for sensor_type, sensor_type_label in sensor_types %}
-                    <option value="{{ sensor_type }}" {% if sensor.type == sensor_type %}selected{% endif %}>
-                        {{ sensor_type }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="min_value" class="form-label">Min Value</label>
-            <input type="number" class="form-control" id="min_value" name="min_value" value="{{ sensor.min_value }}"
-                step="0.01" required>
-        </div>
-        <div class="mb-3">
-            <label for="max_value" class="form-label">Max Value</label>
-            <input type="number" class="form-control" id="max_value" name="max_value" value="{{ sensor.max_value }}"
-                step="0.01" required>
-        </div>
-    </form>
-</div>
+                                <div class="modal-body">
+                                    <form id="editSensorForm{{ sensor.id }}" method="post"
+                                          action="{% url 'edit_sensor' device_id=sensor.device_id sensor_id=sensor.id %}">
+                                        {% csrf_token %}
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Name</label>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                   value="{{ sensor.name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="pin_number" class="form-label">Pin Number</label>
+                                            <input type="number" class="form-control" id="pin_number" name="pin_number"
+                                                   value="{{ sensor.pin_number }}"
+                                                   required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="type" class="form-label">Type</label>
+                                            <select class="form-control" id="type" name="type" required>
+                                                {% for sensor_type, sensor_type_label in sensor_types %}
+                                                    <option value="{{ sensor_type }}"
+                                                            {% if sensor.type == sensor_type %}selected{% endif %}>
+                                                        {{ sensor_type }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="min_value" class="form-label">Min Value</label>
+                                            <input type="number" class="form-control" id="min_value" name="min_value"
+                                                   value="{{ sensor.min_value }}"
+                                                   step="0.01" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="max_value" class="form-label">Max Value</label>
+                                            <input type="number" class="form-control" id="max_value" name="max_value"
+                                                   value="{{ sensor.max_value }}"
+                                                   step="0.01" required>
+                                        </div>
+                                    </form>
+                                </div>
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close

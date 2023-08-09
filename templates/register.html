@@ -29,19 +29,17 @@
                                     </div>
 
                                     <form method="post">
-                                        <p class="text-center">Create new account</p>
-
-                                        <div class="form-outline mb-4">
+                                        <div class="mb-4">
+                                            <label class="form-label" for="email">Email address</label>
                                             {% csrf_token %}
                                             <input type="email" name="email" id="email" class="form-control"
                                                    placeholder="Email address" required/>
-                                            <label class="form-label" for="email">Email address</label>
                                         </div>
 
-                                        <div class="form-outline mb-4">
+                                        <div class="mb-4">
+                                            <label class="form-label" for="password">Password</label>
                                             <input type="password" name="password" id="password" class="form-control"
                                                    required/>
-                                            <label type="submit" class="form-label" for="password">Password</label>
                                         </div>
 
                                         <div class="d-grid text-center pt-1 mb-5 pb-1">
@@ -57,10 +55,17 @@
                                                     class="btn btn-outline-success">Log in
                                             </button>
                                         </div>
+
+                                        {% if messages %}
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    {% for message in messages %}
+                                                        <li>{{ message }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
                                     </form>
-                                    {% if message %}
-                                        <p>{{ message }}</p>
-                                    {% endif %}
                                 </div>
                             </div>
                             <div class="col-lg-6 rounded-5 d-flex align-items-start gradient-custom-2"
