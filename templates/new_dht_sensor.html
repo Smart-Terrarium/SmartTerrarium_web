@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block title %} New DHT Sensor - SmartTerrarium {% endblock %}
+    <link rel="stylesheet" href="{% static 'new_sensor.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.png' %}">
+</head>
+<body>
+{% block content %}
+    <div class="container mt-5">
+        <h1>New DHT Sensor</h1>
+        <p class="text-muted">The DHT Sensor is a two-in-one device that measures both temperature and humidity. It's
+            designed to be connected to a single pin, simplifying its integration.</p>
+
+        <!-- Error message -->
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_message }}
+            </div>
+        {% endif %}
+
+        <!-- Success message -->
+        {% if success_message %}
+            <div class="alert alert-success" role="alert">
+                {{ success_message }} You can see your new sensor by clicking
+               <a href="{% url 'sensors' %}">here</a>. Remember to synchronize changes with your device :)
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="card p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h2>Temperature</h2>
+                        <div class="mb-3">
+                            <label for="temperature_name" class="form-label">Temperature Name:</label>
+                            <input type="text" class="form-control" id="temperature_name" name="temperature_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="temperature_min_value" class="form-label">Min Temperature Value:</label>
+                            <input type="number" class="form-control" id="temperature_min_value"
+                                   name="temperature_min_value">
+                        </div>
+                        <div class="mb-3">
+                            <label for="temperature_max_value" class="form-label">Max Temperature Value:</label>
+                            <input type="number" class="form-control" id="temperature_max_value"
+                                   name="temperature_max_value">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>Humidity</h2>
+                        <div class="mb-3">
+                            <label for="humidity_name" class="form-label">Humidity Name:</label>
+                            <input type="text" class="form-control" id="humidity_name" name="humidity_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="humidity_min_value" class="form-label">Min Humidity Value:</label>
+                            <input type="number" class="form-control" id="humidity_min_value" name="humidity_min_value">
+                        </div>
+                        <div class="mb-3">
+                            <label for="humidity_max_value" class="form-label">Max Humidity Value:</label>
+                            <input type="number" class="form-control" id="humidity_max_value" name="humidity_max_value">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="pin_number" class="form-label">Pin Number:</label>
+                            <input type="number" class="form-control" id="pin_number" name="pin_number">
+                        </div>
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+</body>
+</html>

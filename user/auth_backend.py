@@ -2,11 +2,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import BaseBackend
 from rest_framework.authentication import TokenAuthentication
 import requests
+from django.conf import settings
 
 '''Custom user auth backend'''
 
 User = get_user_model()
-API_URL = 'http://localhost:8000/'
+API_URL = settings.API_URL
 
 
 class ExternalAPIBackend(BaseBackend):
@@ -20,8 +21,6 @@ class ExternalAPIBackend(BaseBackend):
             user, created = User.objects.get_or_create(email=email)
 
             # Aktualizacja danych użytkownika
-            # user.first_name = user_data['first_name']
-            # user.last_name = user_data['last_name']
             user.is_active = True
             user.save()
 

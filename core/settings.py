@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from django.contrib.auth.password_validation import MinimumLengthValidator, NumericPasswordValidator
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,9 +25,16 @@ SECRET_KEY = 'django-insecure-ej34ki=bls064spaq%5pg1yhkino6)ohwb3xv9^xx@o(#o-i)&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#ALLOWED_HOSTS = [
+#    'localhost',
+#    '127.0.0.1'
+#]
 ALLOWED_HOSTS = [
 ]
 
+
+#API_URL = 'http://192.168.105.89:8000/'
+API_URL = 'http://localhost:8000/'
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,6 +49,7 @@ INSTALLED_APPS = [
     'sensors',
     'alerts',
     'device',
+    'informations',
     'bootstrap5',
     "js_lib_bootstrap5",
     'bootstrapform',
@@ -71,6 +80,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'custom_filters': 'sensors.templatetags.custom_filters',
+            },
         },
     },
 ]

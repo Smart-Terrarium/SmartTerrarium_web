@@ -18,87 +18,108 @@
 </head>
 <body>
 {% block content %}
-    <div class="chart-container" id="myCharts">
-    </div>
-    <h1>Devices</h1>
     {% if device_id %}
         <p>Device ID: {{ device_id }}</p>
     {% else %}
         <p>No device ID available.</p>
     {% endif %}
 
+    {{ access_token }}
 
-    <h1 id="temperatureValue">{{ text }}</h1>
+    <h1>Live sensors data charts</h1>
+    <div class="chart-container" id="myCharts">
+    </div>
 
-    <p id="demo"></p>
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        var chart = null;
-        var number_charts = {};
-        var maxColumns = 5;
-        var sensors_counter = 1;
-        var device_dict = {};
-        var isFirstMessage = true;
+
+        // Inicjalizacja zmiennych
+        var number_charts = {}; //obiekt przechowujący wykresy dla różnych sensorów
+        var maxColumns = 8; //ilość kolumn
+        var sensors_counter = 1; //licznik sensorów
+        var device_dict = {}; //słownik przechowywujący dane sensorów i urządzenia
+        var isFirstMessage = true; //flaga określająca czy jest to pierwsza wiadomość
+
+        // Pobranie danych o sensorach i posortowanie ich po numerze PIN
+        var sensorsData = {{ sensors_data|safe }};
+        sensorsData.sort((a, b) => a.pin_number - b.pin_number); // sort by pin_number
+        console.log("Dane sensorów:", sensorsData);
+
+        // Wiadomość do wysłania przez WebSocket
         var message = {
             token: "{{ access_token }}"
         };
+
+        // Wypisanie wiadomości w formacie JSON w konsoli
         console.log(JSON.stringify(message));
 
+        // Inicjacja połączenia z WebSocket
         var socket = new WebSocket('ws://localhost:8000/device/{{ device_id }}/sensor/data');
         socket.onopen = function () {
+            // Wysłanie wiadomości w formacie JSON do WebSocket po nawiązaniu połączenia
             socket.send(JSON.stringify(message));
         };
 
+        // Obsługa otrzymanej wiadomości przez WebSocket
         socket.onmessage = function (e) {
             var wsData = JSON.parse(e.data);
 
-            // Licznik ilości sensorów
+            // Iteracja przez dane sensorów
 
-            //Iteracja urządzenia
-            // Iteracja po device_id
-            if (isFirstMessage) { // Sprawdzanie, czy to jest pierwsza wiadomość
+            // Jeśli to jest pierwsza wiadomość
+            if (isFirstMessage) {
                 isFirstMessage = false; // Ustawienie flagi na false po otrzymaniu pierwszej wiadomości
 
-                // Licznik ilości sensorów
-                for (var device_id in wsData) {
-                    if (!device_dict.hasOwnProperty(device_id)) {
-                        device_dict[device_id] = {};
+                // Iteracja przez dane urządzenia
+                for (var mac_address in wsData) {
+                    if (!device_dict.hasOwnProperty(mac_address)) {
+                        device_dict[mac_address] = {};
                     }
-                    for (var sensor_id in wsData[device_id]) {
-                        if (!device_dict[device_id].hasOwnProperty(sensor_id)) {
-                            device_dict[device_id][sensor_id] = {};
-                            device_dict[device_id][sensor_id]['timestamp'] = [];
-                            device_dict[device_id][sensor_id]['value'] = [];
+                    for (var sensor_id in wsData[mac_address]) {
+                        if (!device_dict[mac_address].hasOwnProperty(sensor_id)) {
+                            // Inicjalizacja danych sensora
+                            device_dict[mac_address][sensor_id] = {
+                                timestamp: [],
+                                value: []
+                            };
                             sensors_counter++;
                         }
-                        device_dict[device_id][sensor_id]['timestamp'].push(wsData[device_id][sensor_id]['timestamp']);
-                        device_dict[device_id][sensor_id]['value'].push(wsData[device_id][sensor_id]['value']);
-                        if (device_dict[device_id][sensor_id]['timestamp'].length > maxColumns) {
-                            device_dict[device_id][sensor_id]['timestamp'].shift();
+
+                        // Dodanie danych do sensora
+                        device_dict[mac_address][sensor_id]['timestamp'].push(wsData[mac_address][sensor_id]['timestamp']);
+                        device_dict[mac_address][sensor_id]['value'].push(wsData[mac_address][sensor_id]['value']);
+
+                        // Usunięcie zbędnych danych, jeśli przekroczono limit
+                        if (device_dict[mac_address][sensor_id]['timestamp'].length > maxColumns) {
+                            device_dict[mac_address][sensor_id]['timestamp'].shift();
                         }
-                        if (device_dict[device_id][sensor_id]['value'].length > maxColumns) {
-                            device_dict[device_id][sensor_id]['value'].shift();
+                        if (device_dict[mac_address][sensor_id]['value'].length > maxColumns) {
+                            device_dict[mac_address][sensor_id]['value'].shift();
                         }
                     }
                 }
+
+                // Wyświetlenie informacji o ilości sensorów i danych urządzenia
                 console.log("Suma ilości zmiennych sensor_id: " + (sensors_counter - 1));
                 console.log(device_dict);
 
+                // Tworzenie wykresów dla sensorów
                 for (var x in device_dict) {
-                    for (var y in device_dict[x]){
-                    const ctx2 = document.getElementById("myCharts")
-                    var ctx = document.createElement('canvas');
-                    ctx.id = y
-                    ctx2.appendChild(ctx)
-                    ctx_now = document.getElementById(y)
-                    number_charts[y] = new Chart(ctx_now, {
+                    for (var y in device_dict[x]) {
+                        const ctx2 = document.getElementById("myCharts");
+                        var ctx = document.createElement('canvas');
+                        ctx.id = y;
+                        ctx2.appendChild(ctx);
+                        ctx_now = document.getElementById(y);
+                        number_charts[y] = new Chart(ctx_now, {
                             type: 'line',
                             data: {
                                 labels: [2],
                                 datasets: [{
-                                    label: 'Terrarium Temperature: ',
+                                    label: 'Terrarium data: ',
                                     data: [1],
                                     borderWidth: 1
                                 }]
@@ -118,27 +139,65 @@
                                     duration: 0
                                 }
                             }
-                        }
-                    )
+                        });
+                    }
                 }
+
+                // Funkcja do formatowania daty
+                function formatDate(timestamp) {
+                    const date = new Date(timestamp);
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const hours = date.getHours().toString().padStart(2, '0');
+                    const minutes = date.getMinutes().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}, ${hours}:${minutes}`;
+                }
+
                 // Aktualizacja danych wykresu
                 for (var j in device_dict) {
                     for (var z in device_dict[j]) {
-                        number_charts[z].data.labels = device_dict[j][z]['timestamp'];
-                        number_charts[z].data.datasets[0].data = device_dict[j][z]['value'];
-                        number_charts[z].data.datasets[0].label = device_dict[j][z]['value'][0];
+                        // Przetwarzanie etykiet czasu bez dodatkowej zmiennej
+                        number_charts[z].data.labels = device_dict[j][z]['timestamp'].map(timestamp => {
+                            const date = new Date(timestamp);
+                            const formattedDate = date.toLocaleDateString();
+                            const formattedTime = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                            return `${formattedDate}, ${formattedTime}`;
+                        });
+
+                        number_charts[z].data.datasets[0].data = device_dict[j][z]['value'].map(value => parseFloat(value).toFixed(2));
+                        number_charts[z].data.datasets[0].label = parseFloat(device_dict[j][z]['value'][0]).toFixed(2);
+
+                        // Dodanie etykiety reprezentującej sensor
+                        const sensorLabel = `Sensor PIN: ${z}, Name: ${sensorsData[z - 1].name}, Type: ${sensorsData[z - 1].type}`;
+                        number_charts[z].options.plugins = {
+                            legend: {
+                                display: true,
+                                labels: {
+                                    generateLabels: function (chart) {
+                                        const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                        labels[0].text = sensorLabel; // Aktualizacja etykiety
+                                        return labels;
+                                    }
+                                }
+                            }
+                        };
+
                         number_charts[z].options.animation.duration = 0;
                         number_charts[z].update();
                     }
-                }
                 }
             } else {
                 // Obsługa pozostałych wiadomości
                 // Aktualizacja danych wykresu bez ponownego pobierania sumy sensorów
                 for (var j in device_dict) {
                     for (var y in device_dict[j]) {
-                        device_dict[j][y]['timestamp'].push(wsData[j][y]['timestamp']);
-                        device_dict[j][y]['value'].push(wsData[j][y]['value']);
+                        const updatedTimestamp = wsData[j][y]['timestamp'];
+                        const updatedValue = wsData[j][y]['value'];
+
+                        device_dict[j][y]['timestamp'].push(updatedTimestamp);
+                        device_dict[j][y]['value'].push(updatedValue);
+
                         if (device_dict[j][y]['timestamp'].length > maxColumns) {
                             device_dict[j][y]['timestamp'].shift();
                         }
@@ -146,8 +205,16 @@
                             device_dict[j][y]['value'].shift();
                         }
 
-                        number_charts[y].data.labels = device_dict[j][y]['timestamp'];
-                        number_charts[y].data.datasets[0].data = device_dict[j][y]['value'];
+                        // Aktualizacja wykresu
+                        number_charts[y].data.labels = device_dict[j][y]['timestamp'].map(timestamp => {
+                            const date = new Date(timestamp);
+                            const formattedDate = date.toLocaleDateString();
+                            const formattedTime = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                            return `${formattedDate}, ${formattedTime}`;
+                        });
+
+                        number_charts[y].data.datasets[0].data = device_dict[j][y]['value'].map(value => parseFloat(value).toFixed(2));
+                        number_charts[y].data.datasets[0].label = parseFloat(updatedValue).toFixed(2);
                         number_charts[y].options.animation.duration = 0;
                         number_charts[y].update();
                     }
@@ -156,11 +223,6 @@
         };
 
     </script>
-    {% if access_token %}
-        <p>Twój token: {{ access_token }}</p>
-    {% else %}
-        <p>Brak tokena.</p>
-    {% endif %}
 {% endblock %}
 </body>
 </html>

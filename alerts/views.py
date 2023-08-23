@@ -1,13 +1,16 @@
 from datetime import datetime
 
-from django.http import HttpResponseNotAllowed
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseNotAllowed, HttpResponseServerError
 from requests import RequestException
 from django.shortcuts import render, redirect
 from .models import Alert
 import requests
+from django.conf import settings
+import time
+from django.http import StreamingHttpResponse
 
-API_URL = 'http://localhost:8000/'
-
+@login_required
 def get_not_served_alerts(request):
     access_token = request.session.get('access_token')
 
@@ -26,7 +29,7 @@ def get_not_served_alerts(request):
     }
 
     try:
-        not_served_alerts = requests.get(API_URL + 'devices/alerts', headers=headers, params=params)
+        not_served_alerts = requests.get(settings.API_URL + 'devices/alerts', headers=headers, params=params)
 
         if not_served_alerts.ok:
             response_json = not_served_alerts.json()
@@ -55,6 +58,8 @@ def get_not_served_alerts(request):
 
     return render(request, 'alerts.html', context)
 
+
+@login_required
 def get_served_alerts(request):
     access_token = request.session.get('access_token')
 
@@ -73,7 +78,7 @@ def get_served_alerts(request):
     }
 
     try:
-        not_served_alerts = requests.get(API_URL + 'devices/alerts', headers=headers, params=params)
+        not_served_alerts = requests.get(settings.API_URL + 'devices/alerts', headers=headers, params=params)
 
         if not_served_alerts.ok:
             response_json = not_served_alerts.json()
@@ -102,13 +107,15 @@ def get_served_alerts(request):
 
     return render(request, 'alerts.html', context)
 
+
+@login_required
 def delete_alert(request, alert_id):
     if request.method == 'POST':
 
         access_token = request.session.get('access_token')
         bearer_token = 'Bearer ' + access_token
 
-        delete_url = API_URL + f'devices/alerts/{alert_id}'
+        delete_url = settings.API_URL + f'devices/alerts/{alert_id}'
         headers = {'Authorization': bearer_token}
 
         try:
@@ -128,12 +135,14 @@ def delete_alert(request, alert_id):
     else:
         return render(request, 'alerts.html')
 
+
+@login_required
 def serve_alerts(request, alert_id):
     if request.method == 'POST':
         access_token = request.session.get('access_token')
         bearer_token = 'Bearer ' + access_token
 
-        serve_alert_url = API_URL + f'devices/alerts/{alert_id}'
+        serve_alert_url = settings.API_URL + f'devices/alerts/{alert_id}'
         headers = {'Authorization': bearer_token}
 
         try:
@@ -152,4 +161,3 @@ def serve_alerts(request, alert_id):
 
     else:
         return render(request, 'alerts.html')
-
