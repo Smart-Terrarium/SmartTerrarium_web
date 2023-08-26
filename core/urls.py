@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 from sensors.views import create_sensor, select_sensors, delete_sensor, edit_sensor, sync_sensors_with_db, create_dht_sensor
 from alerts.views import get_not_served_alerts, get_served_alerts, delete_alert, serve_alerts
 from device.views import device_configuration, edit_device_config
-from informations.views import get_basic_animal_information
+from informations.views import get_basic_animal_information, get_more_animal_information
 
 
 urlpatterns = [
@@ -47,6 +47,7 @@ urlpatterns = [
     path('device/<int:device_id>/edit/', edit_device_config, name='edit_device_config'),
     path('sync_sensors/<int:device_id>/', sync_sensors_with_db, name='sync_sensors'),
     path('pets/', get_basic_animal_information, name='get_basic_animal_information'),
+    path('pets/more/<int:id>/', get_more_animal_information, name='get_more_animal_information'),
 ]
 
 handler404 = TemplateView.as_view(template_name="errors_templates/404_error.html")

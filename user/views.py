@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 # from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -70,16 +72,64 @@ def home_view(request):
     }
 
     try:
-        devices_response = requests.get(settings.API_URL + 'devices', headers=headers)
-        if devices_response.ok:
-            response_json = devices_response.json()
-            context['response_json'] = response_json
+        if request.method == 'POST':
+            received_data = json.loads(request.body.decode('utf-8'))
+            if isinstance(received_data, list):
+                extracted_data = []
+                for item in received_data:
+                    extracted_item = {
+                        'id': item.get('id'),
+                        'name': item.get('name'),
+                        'user_id': item.get('user_id'),
+                        'mac_address': item.get('mac_address'),
+                    }
+                    extracted_data.append(extracted_item)
+                context['response_json'] = extracted_data
+            else:
+                context['error_message'] = 'Invalid JSON data format.'
+
         else:
-            context['error_message'] = 'Connection lost. Please log in again to see your devices.'
+            devices_response = requests.get(settings.API_URL + 'devices', headers=headers)
+            if devices_response.ok:
+                response_json = devices_response.json()
+                context['response_json'] = response_json
+
+                # Additional GET requests
+                if 'id' in response_json[0]:
+                    device_id = response_json[0]['id']
+
+                    # Get sensors
+                    sensors_response = requests.get(settings.API_URL + f'device/{device_id}/sensor', headers=headers)
+                    if sensors_response.ok:
+                        sensors_json = sensors_response.json()
+                        context['num_sensors'] = len(sensors_json)
+
+                    # Get alerts (not served)
+                    alerts_not_served_params = {
+                        'only_not_served': 'true'
+                    }
+                    alerts_not_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_not_served_params)
+                    if alerts_not_served_response.ok:
+                        alerts_not_served_json = alerts_not_served_response.json()
+                        context['num_alerts'] = len(alerts_not_served_json)
+
+                    # Get alerts (served)
+                    alerts_served_params = {
+                        'only_served': 'true'
+                    }
+                    alerts_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_served_params)
+                    if alerts_served_response.ok:
+                        alerts_served_json = alerts_served_response.json()
+                        context['num_alerts_served'] = len(alerts_served_json)
+
+            else:
+                context['error_message'] = 'Connection lost. Please log in again to see your devices.'
+
     except RequestException:
         context['error_message'] = 'Connection lost. Please log in again to see your devices.'
 
     return render(request, 'home.html', context)
+
 
 
 def login_view(request):
@@ -112,6 +162,8 @@ def forgot_password(request):
             if email:
                 response = requests.post(settings.API_URL + 'login/forgot-password', json={'email': email})
                 if response.status_code == 200:
+                    message = 'Password reset email sent successfully. Please check your email.'
+                    messages.success(request, message)  # Dodaj wiadomość do kontekstu wiadomości Django
                     return redirect('login')
                 else:
                     message = 'Unable to reset password, wrong email address'

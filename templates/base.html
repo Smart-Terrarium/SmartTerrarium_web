@@ -21,6 +21,7 @@
 <script src="https://kit.fontawesome.com/a732092f31.js" crossorigin="anonymous"></script>
 <!-- Sidebar -->
 <div class="sidebar d-flex flex-column">
+
     <!-- SmartTerrarium logo in the sidebar -->
     <a href="{% url 'charts' %}"><img src="{% static 'text-logo-w-frog_200x220.png' %}" alt="Logo"
                                       class="centered-image"></a>
@@ -30,7 +31,7 @@
             <li><a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Home</a></li>
             <li><a href="{% url 'charts' %}"><i class="fa-solid fa-chart-simple"></i> Charts</a></li>
             <li><a href="{% url 'sensors' %}"><i class="fa-solid fa-bolt"></i> Sensors</a></li>
-            <li><a href="{% url 'get_not_served_alerts' %}"><i class="fa-solid fa-bell"></i> Alerts</a></li>
+            <li><a href="{% url 'get_not_served_alerts' %}" id="alerts-button"><i class="fa-solid fa-bell"></i> Alerts</a></li>
             <li><a href="{% url 'get_basic_animal_information' %}"><i class="fa-solid fa-circle-info"></i> Reptiles Wiki</a></li>
         </ul>
     </div>
@@ -65,5 +66,62 @@
         </div>
     </div>
 </div>
+<script>
+var alertButton = document.querySelector("#alerts-button");
+var newMessagesCount = 0; // Licznik nowych wiadomości
+
+function toggleAlertButtonTextColor() {
+    if (alertButton.style.color === "red") {
+        alertButton.style.color = "";
+    } else {
+        alertButton.style.color = "red";
+    }
+}
+
+function startAlertButtonBlinking() {
+    setInterval(toggleAlertButtonTextColor, 1000); // Wywołanie co 1 sekundę
+}
+
+var message = {
+    token: "{{ access_token }}"
+};
+console.log(JSON.stringify(message));
+
+var alertsocket = new WebSocket("ws://localhost:8000/devices/notifier/alerts");
+
+alertsocket.onopen = function () {
+    alertsocket.send(JSON.stringify(message));
+}
+
+alertsocket.onmessage = function (e) {
+    var rawData = e.data;
+    var splitIndex = rawData.indexOf(" ");
+
+    if (splitIndex === -1) {
+        console.error("Niepoprawny format danych:", rawData);
+        return;
+    }
+
+    var macAddress = rawData.slice(0, splitIndex);
+    var jsonData = rawData.slice(splitIndex + 1);
+
+    try {
+        var alertWsData = JSON.parse(jsonData);
+        console.log("Mac Address:", macAddress);
+        console.log("Alert Data:", alertWsData);
+
+        // Zwiększenie licznika i aktualizacja napisu na przycisku "Alerts"
+        newMessagesCount++;
+        alertButton.innerHTML = `<i class="fa-solid fa-bell"></i> Alerts - ${newMessagesCount} new`;
+
+        // Rozpocznij migotanie tekstu na przycisku "Alerts" tylko jeśli jeszcze nie rozpoczęło się
+        if (newMessagesCount === 1) {
+            startAlertButtonBlinking();
+        }
+    } catch (error) {
+        console.error("Błąd w parsowaniu danych JSON:", error);
+    }
+}
+</script>
 </body>
 </html>

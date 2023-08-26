@@ -161,3 +161,6 @@ def serve_alerts(request, alert_id):
 
     else:
         return render(request, 'alerts.html')
+
+
+

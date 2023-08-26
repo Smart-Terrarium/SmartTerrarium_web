@@ -18,13 +18,6 @@
 </head>
 <body>
 {% block content %}
-    {% if device_id %}
-        <p>Device ID: {{ device_id }}</p>
-    {% else %}
-        <p>No device ID available.</p>
-    {% endif %}
-
-    {{ access_token }}
 
     <h1>Live sensors data charts</h1>
     <div class="chart-container" id="myCharts">

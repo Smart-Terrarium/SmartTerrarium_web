@@ -36,3 +36,36 @@ def get_basic_animal_information(request):
     else:
         error_message = "An error occurred while fetching data."
         return render(request, 'pets.html', {'error_message': error_message})
+
+
+
+@login_required
+def get_more_animal_information(request, id):
+    animal_url = f"http://localhost:8000/pet/{id}"  # URL dla informacji o zwierzęciu
+    response = requests.get(animal_url)
+
+    if response.status_code == 200:
+        data = response.json()
+
+        animal_info = {
+            'id': data['pet']['id'],
+            'name': data['pet']['name'],
+            'description': data['pet']['description']
+        }
+
+        habitat_info = {
+            'temperature': {
+                'min': data['pet_habitat']['information']['temperature']['min'],
+                'max': data['pet_habitat']['information']['temperature']['max']
+            },
+            'humidity': {
+                'min': data['pet_habitat']['information']['humidity']['min'],
+                'max': data['pet_habitat']['information']['humidity']['max']
+            }
+        }
+
+        return render(request, 'animals_more_info.html', {'animal_info': animal_info, 'habitat_info': habitat_info})
+
+    else:
+        error_message = "An error occurred while fetching data."
+        return JsonResponse({'error_message': error_message})

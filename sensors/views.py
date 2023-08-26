@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, reverse, render
 from requests import RequestException
 from django.contrib import messages
 from .forms import SensorForm
@@ -36,6 +36,8 @@ def create_sensor(request):
                         response = requests.post(url, data=json.dumps(data), headers=headers)
 
                         if response.ok:
+                            messages.success(request,'Sensor created successfully! '
+                                                     'Remember to synchronize changes with your device.')
                             return redirect('sensors')  # Przekierowanie po udanym żądaniu
                         else:
                             context = {'form': form, 'error_message': 'Failed to create sensor. Probably sensor with given informations already exists'}
@@ -114,8 +116,8 @@ def create_dht_sensor(request):
 
                     # Handle responses and render appropriate template
                     if temperature_response.status_code == 201 and humidity_response.status_code == 201:
-                        context = {'success_message': 'Sensors created successfully.'}
-                        return render(request, 'new_dht_sensor.html', context)
+                        messages.success(request, 'DHT sensor created successfully! Remember to synchronize changes with your device.')
+                        return redirect('sensors')
                     else:
                         context = {'error_message': 'Failed to create sensors. '
                                                     'Probably sensors with given informations already exists'}
@@ -190,6 +192,8 @@ def delete_sensor(request, sensor_id, device_id):
         try:
             response = requests.delete(delete_url, headers=headers)
             if response.ok:
+                messages.success(request,
+                                 'The sensor has been removed. Remember to synchronize changes with your device.')
                 return redirect('sensors')
             else:
                 error_message = 'Failed to delete sensor.'
@@ -235,6 +239,8 @@ def edit_sensor(request, device_id, sensor_id):
         try:
             response = requests.put(edit_url, json=sensor_data, headers=headers)
             if response.ok:
+                messages.success(request,
+                                 'You have edited the sensor successfully! Remember to synchronize changes with your device.')
                 return redirect('sensors')
             else:
                 error_message = 'Failed to edit sensor.'
@@ -265,4 +271,4 @@ def sync_sensors_with_db(request, device_id):
     except requests.RequestException:
         messages.error(request, 'Connection lost. Please try again.')
 
-    return redirect('sensors')  # Redirect to sensors page after processing
+    return redirect('sensors')

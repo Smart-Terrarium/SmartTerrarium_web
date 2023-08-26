@@ -1,23 +1,102 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
 {% block title %} Home {% endblock %}
 {% block content %}
-    {% if access_token %}
-        <p>Twój token: {{ access_token }}</p>
-    {% else %}
-        <p>Brak tokena.</p>
-    {% endif %}
-  <h1>Devices</h1><br>
-    <ul>
-        {% for device in response_json %}
-            {{ device }}
-            {{ error_message_device }}
+    <div class="container mt-4 text-center"> <!-- Dodana klasa "text-center" -->
+        {% if user.is_authenticated %}
+            <h1>Hello, {{ user.email }}</h1>
+        {% else %}
+            <h1>You're not logged in</h1>
+        {% endif %}
+        <br>
 
-        {% empty %}
-            <li>{{ error_message }}</li>
-        {% endfor %}
-    </ul>
+        <h3>Below you can find basic information about your device :)</h3><br><br>
+        <div class="row">
+            {% if response_json %}
+                {% for device in response_json %}
+                    <div class="col mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">MCU</h4>
+                                <h5 class="card-title">Name: {{ device.name }}</h5>
+                                <h5 class="card-text">MAC Address: {{ device.mac_address }}</h5>
+                                <p class="text-muted small mb-0">Device ID: {{ device.id }} | User
+                                    ID: {{ device.user_id }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col">
+                    <p>No devices available. Add a device using our mobile app.</p>
+                </div>
+            {% endif %}
+        </div>
+        <div class="row mt-4">
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Number of Sensors</h5>
+                        <h1 class="card-text">{% if num_sensors %}{{ num_sensors }}{% else %}0{% endif %}</h1>
+                    </div>
+                    <div class="card-footer d-flex justify-content-center">
+                        <a href="{% url 'sensors' %}" class="btn btn-success">Go to Sensors</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col mb-1">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Active Alerts</h5>
+                        <h1 class="card-text" id="activeAlertsNumber">
+                            {% if num_alerts %}{{ num_alerts }}{% else %}0{% endif %}
+                        </h1>
+                    </div>
+                    <div class="card-footer d-flex justify-content-center">
+                        <a href="{% url 'get_not_served_alerts' %}" class="btn btn-success">Go to Active Alerts</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="row mt-4 ">
+            <div class="col mb-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Served / Historical Alerts</h5>
+                        <h1 class="card-text">
+                            {% if num_alerts_served %}{{ num_alerts_served }}{% else %}0{% endif %}
+                        </h1>
+                    </div>
+                    <div class="card-footer d-flex justify-content-center">
+                        <a href="{% url 'get_served_alerts' %}" class="btn btn-success">Go to Served Alerts</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // a script that will make the number of Active Alerts flash red when it is greater than 1
+        const activeAlertsNumber = document.getElementById('activeAlertsNumber');
+
+        function blinkNumber() {
+            activeAlertsNumber.style.color = 'red';
+            setTimeout(() => {
+                activeAlertsNumber.style.color = 'initial';
+            }, 500);
+        }
+
+        const numAlerts = parseInt(activeAlertsNumber.textContent);
+        if (numAlerts > 0) {
+            setInterval(blinkNumber, 1000);
+        }
+        else {
+            activeAlertsNumber.style.color = 'green';
+        }
+    </script>
 
 {% endblock %}
-
-
