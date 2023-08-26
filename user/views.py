@@ -94,34 +94,37 @@ def home_view(request):
                 response_json = devices_response.json()
                 context['response_json'] = response_json
 
-                # Additional GET requests
-                if 'id' in response_json[0]:
-                    device_id = response_json[0]['id']
+                if response_json and isinstance(response_json, list):
+                    if 'id' in response_json[0]:
+                        device_id = response_json[0]['id']
 
-                    # Get sensors
-                    sensors_response = requests.get(settings.API_URL + f'device/{device_id}/sensor', headers=headers)
-                    if sensors_response.ok:
-                        sensors_json = sensors_response.json()
-                        context['num_sensors'] = len(sensors_json)
+                        # Get sensors
+                        sensors_response = requests.get(settings.API_URL + f'device/{device_id}/sensor', headers=headers)
+                        if sensors_response.ok:
+                            sensors_json = sensors_response.json()
+                            context['num_sensors'] = len(sensors_json)
 
-                    # Get alerts (not served)
-                    alerts_not_served_params = {
-                        'only_not_served': 'true'
-                    }
-                    alerts_not_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_not_served_params)
-                    if alerts_not_served_response.ok:
-                        alerts_not_served_json = alerts_not_served_response.json()
-                        context['num_alerts'] = len(alerts_not_served_json)
+                        # Get alerts (not served)
+                        alerts_not_served_params = {
+                            'only_not_served': 'true'
+                        }
+                        alerts_not_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_not_served_params)
+                        if alerts_not_served_response.ok:
+                            alerts_not_served_json = alerts_not_served_response.json()
+                            context['num_alerts'] = len(alerts_not_served_json)
 
-                    # Get alerts (served)
-                    alerts_served_params = {
-                        'only_served': 'true'
-                    }
-                    alerts_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_served_params)
-                    if alerts_served_response.ok:
-                        alerts_served_json = alerts_served_response.json()
-                        context['num_alerts_served'] = len(alerts_served_json)
-
+                        # Get alerts (served)
+                        alerts_served_params = {
+                            'only_served': 'true'
+                        }
+                        alerts_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_served_params)
+                        if alerts_served_response.ok:
+                            alerts_served_json = alerts_served_response.json()
+                            context['num_alerts_served'] = len(alerts_served_json)
+                    else:
+                        context['error_message'] = 'No devices found.'
+                else:
+                    context['error_message'] = 'No devices found.'
             else:
                 context['error_message'] = 'Connection lost. Please log in again to see your devices.'
 

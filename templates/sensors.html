@@ -9,12 +9,14 @@
             Your sensors
             <div class="ms-auto">
                 <div class="d-inline-block me-2">
+                    {% if device_id %}
                     <form method="post" action="{% url 'sync_sensors' device_id=device_id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success"><i class="fa-solid fa-rotate"></i> Sync with
                             device
                         </button>
                     </form>
+                    {% endif %}
                 </div>
                 <div class="d-inline-block">
                     <a href="{% url 'sensor_form' %}" class="btn btn-danger"><i class="fa-solid fa-plus"></i> New sensor</a>
