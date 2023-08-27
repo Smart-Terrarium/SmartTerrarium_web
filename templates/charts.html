@@ -162,7 +162,14 @@
                         number_charts[z].data.datasets[0].label = parseFloat(device_dict[j][z]['value'][0]).toFixed(2);
 
                         // Dodanie etykiety reprezentującej sensor
-                        const sensorLabel = `Sensor PIN: ${z}, Name: ${sensorsData[z - 1].name}, Type: ${sensorsData[z - 1].type}`;
+                        const sensorIndex = sensorsData.findIndex(sensor => sensor.pin_number === parseInt(z));
+                        const sensorData = sensorIndex !== -1 ? sensorsData[sensorIndex] : {
+                            name: 'Unknown',
+                            type: 'Unknown'
+                        };
+                        const sensorLabel = `Sensor PIN: ${z}, Name: ${sensorData.name}, Type: ${sensorData.type}`;
+
+
                         number_charts[z].options.plugins = {
                             legend: {
                                 display: true,

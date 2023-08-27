@@ -196,14 +196,15 @@ def delete_sensor(request, sensor_id, device_id):
                                  'The sensor has been removed. Remember to synchronize changes with your device.')
                 return redirect('sensors')
             else:
-                error_message = 'Failed to delete sensor.'
-                context = {'error_message': error_message}
-                return render(request, 'sensors.html', context)
+                messages.error(request,
+                                 'The sensor cannot be removed. There is an alert for this sensor in the database. '
+                                 'First remove the alert and try removing the sensor again.')
+                return redirect('sensors')
 
         except requests.RequestException:
-            error_message = 'Connection lost. Please try again.'
-            context = {'error_message': error_message}
-            return render(request, 'sensors.html', context)
+            messages.error(request,
+                           'Connection lost. Please try again.')
+            return redirect('sensors')
 
     else:
         return render(request, 'sensors.html')
@@ -243,14 +244,14 @@ def edit_sensor(request, device_id, sensor_id):
                                  'You have edited the sensor successfully! Remember to synchronize changes with your device.')
                 return redirect('sensors')
             else:
-                error_message = 'Failed to edit sensor.'
-                context = {'error_message': error_message}
-                return render(request, 'sensors.html', context)
+                messages.error(request,
+                               'Failed while trying to edit sensor. Please try again.')
+                return redirect('sensors')
 
         except requests.RequestException:
-            error_message = 'Connection lost. Please try again.'
-            context = {'error_message': error_message}
-            return render(request, 'sensors.html', context)
+            messages.error(request,
+                           'Connection lost. Please try again.')
+            return redirect('sensors')
 
 
 @login_required
