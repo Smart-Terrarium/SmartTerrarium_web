@@ -17,6 +17,7 @@ from django.conf import settings
 
 from django.contrib.auth.password_validation import validate_password
 
+
 @csrf_exempt
 def register_user(request):
     # Check if user is already authenticated
@@ -73,10 +74,12 @@ def home_view(request):
 
     try:
         if request.method == 'POST':
+            # Decode and load incoming JSON data from the request body
             received_data = json.loads(request.body.decode('utf-8'))
             if isinstance(received_data, list):
                 extracted_data = []
                 for item in received_data:
+                    # Extract relevant data from each item in the list
                     extracted_item = {
                         'id': item.get('id'),
                         'name': item.get('name'),
@@ -99,7 +102,8 @@ def home_view(request):
                         device_id = response_json[0]['id']
 
                         # Get sensors
-                        sensors_response = requests.get(settings.API_URL + f'device/{device_id}/sensor', headers=headers)
+                        sensors_response = requests.get(settings.API_URL + f'device/{device_id}/sensor',
+                                                        headers=headers)
                         if sensors_response.ok:
                             sensors_json = sensors_response.json()
                             context['num_sensors'] = len(sensors_json)
@@ -108,7 +112,8 @@ def home_view(request):
                         alerts_not_served_params = {
                             'only_not_served': 'true'
                         }
-                        alerts_not_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_not_served_params)
+                        alerts_not_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers,
+                                                                  params=alerts_not_served_params)
                         if alerts_not_served_response.ok:
                             alerts_not_served_json = alerts_not_served_response.json()
                             context['num_alerts'] = len(alerts_not_served_json)
@@ -117,7 +122,8 @@ def home_view(request):
                         alerts_served_params = {
                             'only_served': 'true'
                         }
-                        alerts_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers, params=alerts_served_params)
+                        alerts_served_response = requests.get(settings.API_URL + f'devices/alerts', headers=headers,
+                                                              params=alerts_served_params)
                         if alerts_served_response.ok:
                             alerts_served_json = alerts_served_response.json()
                             context['num_alerts_served'] = len(alerts_served_json)
@@ -134,21 +140,24 @@ def home_view(request):
     return render(request, 'home.html', context)
 
 
-
 def login_view(request):
     if request.user.is_authenticated:
+        # If the user is already authenticated, redirect to the charts page
         return redirect('charts')
     else:
         if request.method == 'POST':
+            # Get email and password from the POST request
             email = request.POST.get('email')
             password = request.POST.get('password')
-
+            # Authenticate user using the provided email and password
             user = authenticate(request, email=email, password=password)
 
             if user is not None:
+                # If authentication is successful, log in the user and redirect to the home page
                 login(request, user)
                 return redirect('home')
             else:
+                # If authentication fails, show an error message
                 messages.error(request, 'Invalid email or password. Please try again. '
                                         'If your account has just been created, we have sent your account '
                                         'confirmation details to your e-mail address. ')
@@ -158,17 +167,22 @@ def login_view(request):
 
 def forgot_password(request):
     if request.user.is_authenticated:
+        # If the user is already authenticated, redirect to the charts page
         return redirect('charts')
     else:
         if request.method == 'POST':
+            # Get email from the form
             email = request.POST.get('email')
             if email:
+                # Make a POST request to the API to initiate password reset
                 response = requests.post(settings.API_URL + 'login/forgot-password', json={'email': email})
                 if response.status_code == 200:
+                    # If password reset request is successful, show a success message and redirect to the login page
                     message = 'Password reset email sent successfully. Please check your email.'
                     messages.success(request, message)  # Dodaj wiadomość do kontekstu wiadomości Django
                     return redirect('login')
                 else:
+                    # If password reset request fails, show an error message
                     message = 'Unable to reset password, wrong email address'
             else:
                 message = 'Set your email address'
@@ -187,16 +201,18 @@ def change_password(request):
         if new_password and password_repeat:
             if new_password == password_repeat:
                 try:
-                    validate_password(new_password)  # Wywołanie walidacji hasła
+                    validate_password(new_password)  # Validate the new password
                 except ValidationError as e:
-                    message = ' '.join(e.messages)  # Przechwytywanie błędów walidacji hasła
+                    message = ' '.join(e.messages)  # Capture password validation errors
                     return render(request, 'change_password.html', {'message': message})
 
+                # Get the bearer token from the session
                 bearer_token = request.session.get('access_token')
                 if bearer_token:
                     headers = {
                         'Authorization': 'Bearer ' + bearer_token,
                     }
+                    # Make a POST request to the external API to change the password
                     response = requests.post(settings.API_URL + 'account/user/change-password', headers=headers,
                                              json={'password': new_password})
                     if response.ok:
@@ -211,4 +227,6 @@ def change_password(request):
             message = 'New password and password repeat are required'
     else:
         message = ''
+
+    # Render the change password page with the appropriate message
     return render(request, 'change_password.html', {'message': message})

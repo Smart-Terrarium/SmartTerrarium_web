@@ -7,12 +7,11 @@ SENSOR_CHOICES = [
 ]
 
 class Sensor(models.Model):
-    device_id = models.IntegerField()
-    id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=25)
-    dth_sensor = models.BooleanField() #This field is not going to the database.
-                            # Checking it only means that two requests will be created in sensors/views.py
-    type = models.CharField(max_length=15, choices=SENSOR_CHOICES)
-    pin_number = models.IntegerField()
-    min_value = models.IntegerField()
-    max_value = models.IntegerField()
+    device_id = models.IntegerField()            # ID of the associated device
+    id = models.IntegerField(primary_key=True)   # Primary key for the sensor
+    name = models.CharField(max_length=25)       # Name of the sensor
+    dth_sensor = models.BooleanField()           # Not stored in the database, used for creating requests
+    type = models.CharField(max_length=15, choices=SENSOR_CHOICES)  # Type of the sensor
+    pin_number = models.IntegerField()           # Pin number for the sensor
+    min_value = models.IntegerField()            # Minimum value for the sensor
+    max_value = models.IntegerField()            # Maximum value for the sensor

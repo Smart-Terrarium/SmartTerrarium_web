@@ -14,9 +14,11 @@
         <div class="row">
             <div class="col-md-6">
             {% if error_message %}
+                <!-- Display error message if present -->
                     <p class="alert alert-danger">{{ error_message }}</p>
                 {% endif %}
                 {% if device_config %}
+                    <!-- MQTT Configuration -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h3 class="card-title">MQTT</h3>
@@ -25,6 +27,7 @@
                             <p class="card-text"><strong>Server IP:</strong> {{ device_config.MQTT_SERVER_IP }}</p>
                         </div>
                     </div>
+                    <!-- TCP Configuration -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h3 class="card-title">TCP</h3>
@@ -32,21 +35,23 @@
                             <p class="card-text"><strong>Port:</strong> {{ device_config.TCP_PORT }}</p>
                         </div>
                     </div>
+                    <!-- Buttons Configuration -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h3 class="card-title">Buttons</h3>
                             <p class="card-text"><strong>Button ADC Pin:</strong> {{ device_config.BUTTON_ADC_PIN }}</p>
                         </div>
                     </div>
+                    <!-- WiFi Configuration -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h3 class="card-title">WiFi</h3>
                             <p class="card-text"><strong>WiFi SSID:</strong> {{ device_config.WIFI_SSID }}</p>
-                            <p class="card-text"><strong>WiFi Password:</strong> {{ device_config.WIFI_PASSWORD }}</p>
                             <p class="card-text"><strong>ESP MAC Address:</strong> {{ device_config.ESP_MAC_ADDRESS }}
                             </p>
                         </div>
                     </div>
+                    <!-- PWM Configuration -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h3 class="card-title">PWM</h3>
@@ -56,12 +61,14 @@
 
                 {% endif %}
                 {% if success_message_device %}
+                    <!-- Display success message if present -->
                     <p class="alert alert-success">{{ success_message_device }}</p>
                 {% endif %}
             </div>
 
             <div class="col-md-6">
                 {% if device_config %}
+                    <!-- LCD Configuration -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h3 class="card-title">LCD</h3>
@@ -77,6 +84,7 @@
                         </div>
                     </div>
                     <div class="card mb-4">
+                    <!-- Font Configuration -->
                         <div class="card-body">
                             <h3 class="card-title">Font Configuration</h3>
                             <p class="card-text"><strong>Font Directory:</strong> {{ device_config.FONT_DIR }}</p>
@@ -84,6 +92,7 @@
                             <p class="card-text"><strong>Font Height:</strong> {{ device_config.FONT_HEIGHT }}</p>
                         </div>
                     </div>
+                    <!-- Water Pump / Pressure Plate Configuration -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h3 class="card-title">Water Pump / Pressure Plate</h3>
@@ -99,6 +108,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
+                    <!-- Modal Title -->
                     <h5 class="modal-title" id="editModalLabel">Edit Device Configuration (Attention! You change at your
                         own risk)</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -109,7 +119,7 @@
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-6">
-                                    <!-- MQTT Configuration -->
+                                    <!-- MQTT Configuration Section -->
                                     <div class="mb-3">
                                         <label for="mqtt_id_name" class="form-label">MQTT ID Name</label>
                                         <input type="text" class="form-control" id="mqtt_id_name" name="mqtt_id_name"

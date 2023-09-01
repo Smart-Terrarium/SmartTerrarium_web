@@ -10,53 +10,54 @@
 </head>
 <body>
 {% block content %}
-<div class="container mt-5">
-<h1>New sensor</h1>
-    <div class="row">
-        <div class="col-md-12">
-            <section class="h-100 gradient-form" style="background-color: white;">
-                <div class="container py-5">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card p-4 h-100">
-                                <div class="card-body p-md-5 mx-md-4">
-                                    <div class="text-center">
-                                        <h2 class="text-center mb-5">Add new standard sensor</h2>
-                                    </div>
-                                    <form method="post">
-                                        {% csrf_token %}
-                                        {% if error_message %}
-                                            <div class="alert alert-danger" role="alert">
-                                                {{ error_message }}
-                                            </div>
-                                        {% endif %}
-                                        <div class="form-outline mb-4">
-                                            {{ form|bootstrap }}
-                                        </div>
-                                        <div class="d-grid text-center pt-1 mb-4">
-                                            <button class="btn btn-success btn-block" type="submit">
-                                                Confirm
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+    <div class="container mt-5">
+        <h1>New sensor</h1>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <div class="card-body p-md-5 mx-md-4">
+                        <div class="text-center">
+                            <h2 class="text-center mb-5">Add new standard sensor</h2>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card p-4 h-100 d-flex justify-content-center align-items-start">
-                                <div>
-                                    <h2>Want to add a new DHT Sensor?</h2>
-                                    <p class="mb-4">The DHT Sensor is a two-in-one device that measures both temperature and humidity. It's designed to be connected to a single pin, simplifying its integration.</p>
-                                    <a href="{% url 'dht_sensor' %}" class="btn btn-primary">Add DHT Sensor</a>
+                        <form method="post">
+                            {% csrf_token %}
+                            {% if error_message %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error_message }}
                                 </div>
+                            {% endif %}
+                            <div class="form-outline mb-4">
+                                {{ form|bootstrap }}
                             </div>
-                        </div>
+                            <div class="d-grid text-center pt-1 mb-4">
+                                <button class="btn btn-success btn-block" type="submit">
+                                    Confirm
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </section>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <div>
+                        <h2>Not sure what sensor settings to choose for your pet?</h2>
+                        <p class="mb-4">Visit our Reptiles Wiki, find your pet species and find out what sensor settings to choose for your pet :)</p>
+                        <a href="{% url 'get_basic_animal_information' %}" class="btn btn-warning">Reptiles Wiki</a>
+                    </div>
+                </div><div class="my-4"></div>
+                <div class="card p-4">
+                    <div>
+                        <h2>Want to add a new DHT Sensor?</h2>
+                        <p class="mb-4">The DHT Sensor is a two-in-one device that measures both
+                            temperature and humidity. It's designed to be connected to a single pin,
+                            simplifying its integration.</p>
+                        <a href="{% url 'dht_sensor' %}" class="btn btn-info">Add DHT Sensor</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 </body>
 </html>

@@ -24,21 +24,22 @@ def create_sensor(request):
                 'Authorization': 'Bearer ' + bearer_token,
             }
 
-            # GET request to receive device id of a user
+            # Send a GET request to fetch the device ID associated with the user's account
             try:
                 device_id_response = requests.get(settings.API_URL + 'devices', headers=headers)
                 if device_id_response.ok:
                     devices_data = device_id_response.json()
                     if len(devices_data) > 0:
+                        # Get the device ID from the first device in the list
                         device_id = devices_data[0]['id']
-
+                        # Construct the URL for creating a new sensor under the device
                         url = f'{settings.API_URL}device/{device_id}/sensor/'
                         response = requests.post(url, data=json.dumps(data), headers=headers)
 
                         if response.ok:
                             messages.success(request,'Sensor created successfully! '
                                                      'Remember to synchronize changes with your device.')
-                            return redirect('sensors')  # Przekierowanie po udanym żądaniu
+                            return redirect('sensors')  # Redirect after successful request
                         else:
                             context = {'form': form, 'error_message': 'Failed to create sensor. Probably sensor with given informations already exists'}
                             return render(request, 'new_sensor.html', context)
@@ -58,25 +59,29 @@ def create_sensor(request):
 @login_required
 def create_dht_sensor(request):
     if request.method == 'POST':
+        # Extract form data for temperature sensor form
         temperature_name = request.POST.get('temperature_name')
         temperature_min_value = request.POST.get('temperature_min_value')
         temperature_max_value = request.POST.get('temperature_max_value')
         temperature_sensor_type = 'temperature'
 
+        # Extract form data for humidity sensor form
         humidity_name = request.POST.get('humidity_name')
         humidity_min_value = request.POST.get('humidity_min_value')
         humidity_max_value = request.POST.get('humidity_max_value')
         humidity_sensor_type = 'humidity'
 
+        # Extract pin number from form
         pin_number = request.POST.get('pin_number')
 
         try:
+            # Get the access token from the user's session
             bearer_token = request.session.get('access_token')
             headers = {
                 'Authorization': 'Bearer ' + bearer_token,
             }
 
-            # GET request to receive device id of a user
+            # Send a GET request to receive the device ID of a user
             device_id_response = requests.get(settings.API_URL + 'devices', headers=headers)
             if device_id_response.ok:
                 devices_data = device_id_response.json()
@@ -100,7 +105,7 @@ def create_dht_sensor(request):
                         'pin_number': int(pin_number) * 100 + 2
                     }
 
-                    # Make API requests
+                    # Make API requests to create temperature and humidity sensors
                     temperature_response = requests.post(
                         f'{settings.API_URL}device/{device_id}/sensor/',
                         json=temperature_data,
@@ -130,7 +135,9 @@ def create_dht_sensor(request):
     return render(request, 'new_dht_sensor.html')
 @login_required
 def select_sensors(request):
+    # Get the access token from the user's session
     access_token = request.session.get('access_token')
+    # Prepare the initial context with access token and sensor types
     context = {
         'access_token': access_token,
         'text': 'Error - connection to server failed',
@@ -140,17 +147,19 @@ def select_sensors(request):
         'Authorization': 'Bearer ' + access_token,
     }
     try:
+        # Send a GET request to fetch the list of devices associated with the user
         devices_response = requests.get(settings.API_URL + 'devices', headers=headers)
         if devices_response.ok:
             response_json = devices_response.json()
             if isinstance(response_json, list) and len(response_json) > 0:
                 device_id = response_json[0].get('id')
                 if device_id:
+                    # Send a GET request to fetch sensor data for the selected device
                     sensor_response = requests.get(f'{settings.API_URL}device/{device_id}/sensor', headers=headers)
                     if sensor_response.ok:
                         sensor_response_json = sensor_response.json()
 
-                        # Prepare sensors using the Sensor model but don't save to the database
+                        # Prepare sensor data using the Sensor model but don't save to the database
                         sensor_data = []
                         for sensor_data_json in sensor_response_json:
                             sensor = Sensor(
@@ -163,7 +172,7 @@ def select_sensors(request):
                                 device_id=device_id,  # Add device_id to the sensor data
                             )
                             sensor_data.append(sensor)
-
+                        # Update the context with sensor data and device ID
                         context['sensor_data'] = sensor_data
                         context['device_id'] = device_id  # Add device_id to the context
 
@@ -187,9 +196,11 @@ def delete_sensor(request, sensor_id, device_id):
         bearer_token = 'Bearer ' + access_token
 
         delete_url = API_URL + f'device/{device_id}/sensor/{sensor_id}'
+        # Prepare the headers for the DELETE request
         headers = {'Authorization': bearer_token}
 
         try:
+            # Send a DELETE request to remove the sensor
             response = requests.delete(delete_url, headers=headers)
             if response.ok:
                 messages.success(request,
@@ -216,14 +227,14 @@ def edit_sensor(request, device_id, sensor_id):
         access_token = request.session.get('access_token')
         bearer_token = 'Bearer ' + access_token
 
-        # Pobranie danych z formularza
+        # Get data from the form
         name = request.POST.get('name')
         pin_number = int(request.POST.get('pin_number'))
         type = request.POST.get('type')
         min_value = float(request.POST.get('min_value'))
         max_value = float(request.POST.get('max_value'))
 
-        # Utworzenie JSON z nowymi danymi dla sensora
+        # Create JSON data with the new sensor information
         sensor_data = {
             'name': name,
             'pin_number': pin_number,
@@ -232,12 +243,13 @@ def edit_sensor(request, device_id, sensor_id):
             'max_value': max_value,
         }
 
-        # Utworzenie nagłówka z tokenem dostępu
+        # Prepare headers with the access token
         headers = {'Authorization': bearer_token}
 
-        # Wysłanie żądania PUT na adres edycji sensora
+        # Construct the URL for the PUT request to edit the sensor
         edit_url = f'{settings.API_URL}device/{device_id}/sensor/{sensor_id}/'
         try:
+            # Send a PUT request to edit the sensor
             response = requests.put(edit_url, json=sensor_data, headers=headers)
             if response.ok:
                 messages.success(request,

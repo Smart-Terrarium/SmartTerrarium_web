@@ -15,21 +15,27 @@ def device_configuration(request):
     headers = {'Authorization': 'Bearer ' + access_token}
 
     try:
+        # Send a GET request to fetch devices data from the API
         devices_response = requests.get(API_URL + 'devices', headers=headers)
         if devices_response.ok:
             device_info = devices_response.json()
+            # Check if the response JSON is a list and not empty
             if isinstance(device_info, list) and len(device_info) > 0:
                 device_id = device_info[0].get('id')
                 context['device_id'] = device_id
                 if device_id:
+                    # Send a GET request to fetch device configuration for the specific device
                     device_config_response = requests.get(API_URL + f'device/{device_id}/configuration',
                                                           headers=headers)
+                    # Check if the device configuration response is successful
                     if device_config_response.ok:
                         device_config_data = device_config_response.json()
+                        # Check if 'payload' exists in the response data
                         if 'payload' in device_config_data:
                             device_config_payload = device_config_data['payload']['configuration']
 
                             try:
+                                # Create a DeviceConfig object using the fetched data
                                 device_config = DeviceConfig(
                                     device_type=device_config_payload.get('type'),
                                     purpose=device_config_payload.get('purpose'),
@@ -83,7 +89,7 @@ def edit_device_config(request, device_id):
         access_token = request.session.get('access_token')
         bearer_token = 'Bearer ' + access_token
 
-        # Pobranie danych z formularza edycji konfiguracji urządzenia
+        # Retrieve data from the device configuration edit form
         device_config_data = {
             "MQTT": {
                 "MQTT_ID_NAME": request.POST.get('mqtt_id_name'),
@@ -126,13 +132,15 @@ def edit_device_config(request, device_id):
                 "WATER_PUMP_PIN": int(request.POST.get('water_pump_pin')),
             },
         }
-        # Utworzenie nagłówka z tokenem dostępu
+        # Create headers with the bearer token
         headers = {'Authorization': bearer_token}
 
-        # Wysłanie żądania POST na adres edycji konfiguracji urządzenia
+        # Construct the URL for editing the device configuration
         edit_url = f'{settings.API_URL}device/{device_id}/configuration'
         try:
+            # Send a POST request to edit the device configuration
             response = requests.post(edit_url, json=device_config_data, headers=headers)
+            # Check if the API response indicates successful edit
             if response.ok:
                 success_message_device = 'Device configuration changed, reboot the device.'
                 context = {'success_message_device': success_message_device}
@@ -141,7 +149,7 @@ def edit_device_config(request, device_id):
                 error_message = 'Failed to edit device configuration.'
                 context = {'error_message': error_message}
                 return render(request, 'device.html', context)
-
+        # Handle exceptions that might occur during the API request
         except requests.RequestException:
             error_message = 'Connection lost. Please try again.'
             context = {'error_message': error_message}

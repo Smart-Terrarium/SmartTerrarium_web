@@ -80,22 +80,21 @@
     </div>
 
     <script>
-        // a script that will make the number of Active Alerts flash red when it is greater than 1
+        // Script to make the number of Active Alerts flash red when greater than 1
         const activeAlertsNumber = document.getElementById('activeAlertsNumber');
 
         function blinkNumber() {
-            activeAlertsNumber.style.color = 'red';
+            activeAlertsNumber.style.color = 'red'; // Change text color to red
             setTimeout(() => {
-                activeAlertsNumber.style.color = 'initial';
+                activeAlertsNumber.style.color = 'initial'; // Reset text color
             }, 500);
         }
 
         const numAlerts = parseInt(activeAlertsNumber.textContent);
         if (numAlerts > 0) {
-            setInterval(blinkNumber, 1000);
-        }
-        else {
-            activeAlertsNumber.style.color = 'green';
+            setInterval(blinkNumber, 1000); // Trigger the blinkNumber function every second
+        } else {
+            activeAlertsNumber.style.color = 'green'; // Set text color to green if there are no alerts
         }
     </script>
 

@@ -1,21 +1,24 @@
 {% extends 'base.html' %}
-{% block title %} Animals Informations - SmartTerrarium {% endblock %}
+{% block title %} Animals Information - SmartTerrarium {% endblock %}
 {% block content %}
     <div class="container">
         <h1 class="mt-4">Reptiles Wiki Page:</h1><br>
         <div class="row">
             <div class="col-md-12 mb-4">
                 <div class="card">
+                    <!-- Display animal information -->
                     <div class="card-body">
                         <h5 class="card-title"><strong>{{ animal_info.name }}</strong></h5>
                         <p class="card-text">{{ animal_info.description }}</p>
                     </div>
+                    <!-- Display habitat information -->
                     <div class="card-footer">
-                        <h6 class="mb-2">Informations:</h6>
+                        <h6 class="mb-2">Information:</h6>
                         <p><strong>Temperature Range:</strong> {{ habitat_info.temperature.min }}°C - {{ habitat_info.temperature.max }}°C</p>
                         <p><strong>Humidity Range:</strong> {{ habitat_info.humidity.min }}% - {{ habitat_info.humidity.max }}%</p>
                     </div>
                 </div>
+                <!-- Link to return to the list of animals -->
                 <a href="{% url 'get_basic_animal_information' %}" class="btn btn-outline-success mt-3">
                     <i class="fa-solid fa-arrow-left"></i> Back to List
                 </a>
